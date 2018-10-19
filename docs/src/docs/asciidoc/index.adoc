@@ -1,0 +1,86 @@
+= Quarantyne User Guide
+Quarantyne Team <team@quarantyne.com>
+v1.0, 2018-10-04
+:toc: right
+:imagesdir: images/
+
+== What is Quarantyne?
+Quarantyne is a technology used to automate the *identification* and *prevention* of web
+fraud.
+
+=== For Executives
+Online businesses are using analytics software to understand their
+audience or predict revenue. But few companies are using software
+to understand the *intent* behind a web visit. The majority of an online audience
+is legitimate people seeking out a valuable service or information, but a growing
+percentage of web traffic will be fraudulent or outright hostile, because online fraud
+is anonymous and the tools used to produce it on a large scale are now affordable.
+
+Web fraud is multi-faceted and goes beyond paying using a stolen credit card number, because web fraud designed to look like
+legitimate usage. By the time fraud happens and damages are incurred, it's often too late.
+Teams scramble to find out what's going on and try to blacklist some IP address to stop it.
+Blacklists and bespoke code starts crippling the code base and increase technical debt.
+
+Proper detection mechanisms and counter-measures must be implemented proactively, which requires in-house knowledge
+of web fraud vectors, new software project staffing, infrastructure provisioning
+and ongoing maintenance.
+
+*Quarantyne* is a cyber-security software that is your first line of defense in web fraud detection
+and prevention. It detects the most common fraud schemes, from straightforward reconnaissance
+to sophisticated account hijacking. Using Quarantyne today lets your engineering and product team
+focus on your core business while creating a moat between your business and fraudsters.
+
+
+=== For CISO / Security Professionals / Developers / DevOps / IT teams
+Quarantyne's mission is to identify and mitigate automated web threats and application misuse.
+
+Historically, technical and security teams have successfully protected the business
+by hardening applications and servers, and using firewalls, rate limiters, bespoke blacklists/whitelists, rulsets...
+
+Attackers are constantly trying to outsmart these defense mechanisms. Online security becomes a cat-and-mouse game.
+Instead, Quarantyne is a level 7 technology that eliminate web fraud at the HTTP level, before requests
+reach your servers.
+
+== Web of trust or Web of fraud?
+TODO Most requests are legit. More and more requests are fraudulent and automated.
+
+== Common targets of automated web threats
+=== Revenue
+TODO Payment fraud. Ad click fraud
+
+=== Data
+TODO Data exfiltration. Scraping. Spam
+
+=== Users and Customers
+TODO Account hijacking. Fake emails
+
+=== Brand and Reputation
+TODO Website breach. Fake accounts
+
+== Deployment Quarantyne
+=== On-Premise
+TODO reverse proxy. real-time for all traffic. offline. data protection. vm/docker distribution. devops friendly
+
+=== Software-as-a-Service
+TODO not for real-time, maybe account takeover only / email quality
+
+== Integration
+=== On-Premise
+TODO HTTP header injection
+
+=== Software-as-a-Service
+TODO TBD
+
+== Quarantyne vs.
+=== Sqreen
+=== Distil Networks
+=== Shape Security
+
+== FAQ
+[qanda]
+Question 1::
+  Answer 1
+Question 2::
+  Answer 2
+
+TIP: Quarantyne will secure your website :)

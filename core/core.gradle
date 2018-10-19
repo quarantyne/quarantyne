@@ -1,0 +1,15 @@
+dependencies {
+    compile group: 'org.slf4j', name: 'slf4j-api', version: slf4jVersion
+    compile group: 'com.google.guava', name: 'guava', version: guavaVersion
+    compile group: 'com.github.ben-manes.caffeine', name: 'caffeine', version: caffeineVersion
+    compile group: 'com.google.code.gson', name: 'gson', version: gsonVersion
+    compileOnly group: 'org.projectlombok', name: 'lombok', version: lombokVersion
+    annotationProcessor group: 'org.projectlombok', name: 'lombok', version: lombokVersion
+}
+
+
+// scripts
+task genBloomFilters(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = "com.quarantyne.core.bloomfilters.GenBloomFilters"
+}
