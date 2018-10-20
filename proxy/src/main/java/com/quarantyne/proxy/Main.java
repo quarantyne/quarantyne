@@ -80,6 +80,7 @@ public class Main {
     int numCpus = CpuCoreSensor.availableProcessors();
 
     VertxOptions vertxOptions = new VertxOptions();
+    vertxOptions.setPreferNativeTransport(true);
     vertxOptions.setMetricsOptions(
         new DropwizardMetricsOptions().setEnabled(true)
     );

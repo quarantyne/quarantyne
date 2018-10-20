@@ -11,14 +11,17 @@ import com.quarantyne.proxy.ServerConfig;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Future;
 import io.vertx.core.MultiMap;
+import io.vertx.core.buffer.Buffer;
 import io.vertx.core.http.HttpClient;
 import io.vertx.core.http.HttpClientOptions;
 import io.vertx.core.http.HttpClientRequest;
 import io.vertx.core.http.HttpHeaders;
+import io.vertx.core.http.HttpMethod;
 import io.vertx.core.http.HttpServer;
 import io.vertx.core.http.HttpServerOptions;
 import io.vertx.core.http.HttpServerRequest;
 import io.vertx.core.http.HttpServerResponse;
+import io.vertx.core.net.JksOptions;
 import java.util.Set;
 import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
@@ -28,6 +31,7 @@ public final class ProxyVerticle extends AbstractVerticle {
 
   private final ServerConfig serverConfig;
   private final CompositeClassifier quarantyneClassifier;
+  private HttpClient httpClient;
 
   public ProxyVerticle(ServerConfig serverConfig, CompositeClassifier quarantyneClassifier) {
     this.serverConfig = serverConfig;
@@ -53,35 +57,16 @@ public final class ProxyVerticle extends AbstractVerticle {
     httpClientOptions.setDefaultHost(serverConfig.getRemoteHost());
     httpClientOptions.setDefaultPort(serverConfig.getRemotePort());
 
-    HttpClient httpClient = vertx.createHttpClient(httpClientOptions);
+    this.httpClient = vertx.createHttpClient(httpClientOptions);
 
     httpServer.requestHandler(frontReq -> {
-      frontReq.bodyHandler(reqBody -> {
-        HttpServerResponse frontRep = frontReq.response();
-        HttpClientRequest backReq = httpClient.request(
-            frontReq.method(),
-            frontReq.uri()
-        );
-        backReq.headers().setAll(frontReq.headers());
-        backReq.headers().set(HttpHeaders.HOST, serverConfig.getRemoteHost());
-        // inject quarantyne headers, if any
-        backReq.headers().setAll(quarantyneCheck(frontReq));
-        // --------------------------------
-        backReq.handler(backRep -> {
-          backRep.bodyHandler(repBody -> {
-            frontRep.setStatusCode(backRep.statusCode());
-            frontRep.headers().setAll(backRep.headers());
-            frontRep.end(repBody);
-          });
+      if (frontReq.method().equals(HttpMethod.POST) || frontReq.method().equals(HttpMethod.PUT)) {
+        frontReq.bodyHandler(reqBody -> {
+          proxiedRequestHandler(frontReq, reqBody);
         });
-        backReq.exceptionHandler(ex -> {
-          log.error("error while querying downstream service", ex);
-          frontRep.setStatusCode(500);
-          frontRep.end("Internal Server Error. This request cannot be satisfied.");
-        });
-
-        backReq.end(reqBody);
-      });
+      } else {
+        proxiedRequestHandler(frontReq, Buffer.buffer());
+      }
     });
 
     httpServer.exceptionHandler(ex -> {
@@ -96,10 +81,43 @@ public final class ProxyVerticle extends AbstractVerticle {
     });
   }
 
+  private void proxiedRequestHandler(HttpServerRequest frontReq, Buffer frontReqBody) {
+    HttpServerResponse frontRep = frontReq.response();
+    HttpClientRequest backReq = httpClient.request(
+        frontReq.method(),
+        frontReq.uri()
+    );
+
+    backReq.headers().setAll(frontReq.headers());
+    backReq.headers().set(HttpHeaders.HOST, serverConfig.getRemoteHost());
+    // inject quarantyne headers, if any
+    backReq.headers().setAll(quarantyneCheck(frontReq, frontReqBody));
+    // --------------------------------
+    backReq.handler(backRep -> {
+      Buffer body = Buffer.buffer();
+      backRep.handler(body::appendBuffer);
+      backRep.endHandler(h -> {
+        frontRep.setStatusCode(backRep.statusCode());
+        frontRep.headers().setAll(backRep.headers());
+        frontRep.end(body);
+      });
+    });
+    backReq.exceptionHandler(ex -> {
+      log.error("error while querying downstream service", ex);
+      frontRep.setStatusCode(500);
+      frontRep.end("Internal Server Error. This request cannot be satisfied.");
+    });
+    backReq.end(frontReqBody);
+  }
+
   private Joiner joiner = Joiner.on(",");
 
   // returns quarantyne headers
   private MultiMap quarantyneCheck(HttpServerRequest req) {
+    return quarantyneCheck(req, Buffer.buffer());
+  }
+
+  private MultiMap quarantyneCheck(HttpServerRequest req, Buffer body) {
     HttpRequest httpRequest = new HttpRequest(
         HttpRequestMethod.valueOf(req.method().toString().toUpperCase()),
         new CaseInsensitiveStringKV(req.headers().entries()),
