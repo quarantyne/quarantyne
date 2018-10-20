@@ -65,7 +65,7 @@ public final class ProxyVerticle extends AbstractVerticle {
           proxiedRequestHandler(frontReq, reqBody);
         });
       } else {
-        proxiedRequestHandler(frontReq, Buffer.buffer());
+        proxiedRequestHandler(frontReq, null);
       }
     });
 
@@ -107,7 +107,11 @@ public final class ProxyVerticle extends AbstractVerticle {
       frontRep.setStatusCode(500);
       frontRep.end("Internal Server Error. This request cannot be satisfied.");
     });
-    backReq.end(frontReqBody);
+    if (frontReqBody != null) {
+      backReq.end(frontReqBody);
+    } else {
+      backReq.end();
+    }
   }
 
   private Joiner joiner = Joiner.on(",");

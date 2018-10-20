@@ -1,6 +1,11 @@
+plugins {
+    id "com.github.hierynomus.license" version "0.14.0"
+}
+
 group 'com.quarantyne'
 
 subprojects {
+
     apply plugin: 'java'
     sourceCompatibility = javaVersion
 
