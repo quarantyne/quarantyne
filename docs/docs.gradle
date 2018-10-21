@@ -1,9 +1,0 @@
-plugins {
-    id 'org.asciidoctor.convert' version '1.5.7'
-}
-
-task upload(type: Exec) {
-    commandLine "/usr/local/bin/aws", "s3", "sync", "docs/build/asciidoc/html5", "s3://quarantyne-docs/", "--acl", "public-read"
-}
-
-upload.dependsOn asciidoctor

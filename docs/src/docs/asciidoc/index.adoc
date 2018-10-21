@@ -1,6 +1,6 @@
 = Quarantyne User Guide
 Quarantyne Team <team@quarantyne.com>
-v1.0, 2018-10-04
+v1.0, 2018-10-20
 :toc: right
 :imagesdir: images/
 

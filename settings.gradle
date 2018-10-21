@@ -1,9 +1,3 @@
 rootProject.name = 'quarantyne'
 
-include 'core'
-include 'proxy'
 include 'docs'
-
-rootProject.children.each {
-    it.buildFileName = it.name + '.gradle'
-}
