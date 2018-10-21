@@ -16,7 +16,7 @@ public class Label {
     return this.name;
   }
 
-  public static Set<Label> LARGE_BODY = Sets.newHashSet(new Label("LBY"));
+  public static Set<Label> LARGE_BODY = Sets.newHashSet(new Label("LBD"));
   public static Set<Label> FAST_BROWSER = Sets.newHashSet(new Label("FAS"));
   public static Set<Label> COMPROMISED_PASSWORD = Sets.newHashSet(new Label("CPW"));
   public static Set<Label> DISPOSABLE_EMAIL = Sets.newHashSet(new Label("DMX"));

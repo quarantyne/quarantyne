@@ -15,7 +15,7 @@ public final class ServerConfig {
   @Parameter(names = "--remoteHost", description = "remote host")
   private String remoteHost = "httpbin.org";
 
-  @Parameter(names = "--ssl", description = "remote host is over SSL")
+  @Parameter(names = "--remoteSsl", description = "remote host is over SSL")
   private Boolean isSsl = false;
 
   @Parameter(names = "--adminPort", description = "internal port from which health and metrics are published")
