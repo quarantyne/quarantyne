@@ -36,7 +36,7 @@ http://127.0.0.1:8080, and proxies traffic to http://httpbin.org.
 Send a few requests to http://127.0.0.1:8080/headers via various means, and
 if fraudulent behavior is detected, you should see Quarantyne headers
 in the request received by the service fronted by Quarantyne. 
-Hint: try with curl, or from an AWS.
+Hint: try with curl.
 
 ## Configuration
 Quarantyne is configured using command line arguments like 
@@ -68,6 +68,7 @@ __DMX__ | Disposable Email | in progress
 __IPR__ | IP Address Rotation | in progress
 __HDR__ | Suspicious Request Headers| in progress
 __USR__ | Suspicious User-Agent | in progress
+__PCX__ | Public Cloud Execution |
 
 ### Fraud redirection [in progress...]
 Quarantyne can be configured to handle fraud by itself and stop requests 
