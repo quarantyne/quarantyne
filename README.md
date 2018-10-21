@@ -1,5 +1,5 @@
 # quarantyne [![Build Status](https://travis-ci.org/quarantyne/quarantyne.svg?branch=master)](https://travis-ci.org/quarantyne/quarantyne) 
-Fast and unobtrusive web fraud detection and labelling.
+__Fast and unobtrusive web fraud detection and labelling.__
 
 __TL;DR__ Quarantyne is a reverse-proxy that looks for signs of fraudulent behavior in web traffic running through it. If detected, fraud is labelled in real-time via HTTP request headers injection, like `X-Quarantyne-Labels: FAS,HDR`, for your HTTP service behind Quarantyne to use.
 
