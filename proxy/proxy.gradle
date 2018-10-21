@@ -20,6 +20,8 @@ dependencies {
     compile project(':core')
 }
 
+
+
 shadowJar {
     classifier = null
 }
