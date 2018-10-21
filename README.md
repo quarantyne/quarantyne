@@ -2,7 +2,7 @@
 __Fast and unobtrusive web fraud detection and labelling.__
 
 __TL;DR__ Quarantyne is a reverse-proxy that looks for signs of 
-fraudulent behavior in web traffic running through it. If detected, 
+fraudulent behavior in web traffic. If detected, 
 fraud is labelled in real-time via HTTP request headers injection, 
 like `X-Quarantyne-Labels: FAS,HDR`, for your HTTP service behind 
 Quarantyne to use.
@@ -70,8 +70,8 @@ __HDR__ | Suspicious Request Headers| in progress
 __USR__ | Suspicious User-Agent | in progress
 
 ### Fraud redirection [in progress...]
-Quarantyne can be configured to handle fraud on its own and prevent 
-it from reaching your servers, saving you resources, metrics skew, 
+Quarantyne can be configured to handle fraud by itself and stop requests 
+from reaching your servers, saving you resources, metrics skew, 
 and spam data scrubs. Instead of proxying the request to your server, 
 Quarantyne can either display an internal error, or fetch and display 
 a static page at the URL of your choice. 
