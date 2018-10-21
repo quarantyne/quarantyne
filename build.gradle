@@ -15,6 +15,18 @@ repositories {
     jcenter()
 }
 
+shadowDistTar.enabled = false
+
+shadowJar {
+    baseName = 'quarantyne'
+    classifier = null
+    version = null
+}
+shadowDistZip {
+    baseName = "quarantyne"
+    classifier = null
+    version = null
+}
 wrapper {
     gradleVersion = '4.10.2'
 }

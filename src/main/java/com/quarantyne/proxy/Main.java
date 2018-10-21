@@ -81,7 +81,6 @@ public class Main {
 
     VertxOptions vertxOptions = new VertxOptions();
     vertxOptions.setPreferNativeTransport(true);
-    vertxOptions.setEventLoopPoolSize(50);
     vertxOptions.setMetricsOptions(
         new DropwizardMetricsOptions().setEnabled(true)
     );

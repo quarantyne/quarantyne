@@ -21,7 +21,6 @@ import io.vertx.core.http.HttpServer;
 import io.vertx.core.http.HttpServerOptions;
 import io.vertx.core.http.HttpServerRequest;
 import io.vertx.core.http.HttpServerResponse;
-import io.vertx.core.net.JksOptions;
 import java.util.Set;
 import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
@@ -91,7 +90,7 @@ public final class ProxyVerticle extends AbstractVerticle {
     backReq.headers().setAll(frontReq.headers());
     backReq.headers().set(HttpHeaders.HOST, serverConfig.getRemoteHost());
     // inject quarantyne headers, if any
-    backReq.headers().setAll(quarantyneCheck(frontReq, frontReqBody));
+    backReq.headers().addAll(quarantyneCheck(frontReq, frontReqBody));
     // --------------------------------
     backReq.handler(backRep -> {
       Buffer body = Buffer.buffer();

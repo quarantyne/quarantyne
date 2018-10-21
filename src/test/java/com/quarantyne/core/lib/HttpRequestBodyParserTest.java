@@ -1,12 +1,10 @@
 package com.quarantyne.core.lib;
 
-import com.google.common.base.Charsets;
-import com.google.common.collect.Lists;
-import io.vertx.core.json.JsonObject;
-import java.util.List;
-import org.junit.Test;
+import static org.assertj.core.api.Assertions.assertThat;
 
-import static org.assertj.core.api.Assertions.*;
+import com.google.common.base.Charsets;
+import io.vertx.core.json.JsonObject;
+import org.junit.Test;
 
 public class HttpRequestBodyParserTest {
   static String JSON = "application/json";

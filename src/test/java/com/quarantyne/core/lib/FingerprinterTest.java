@@ -1,12 +1,12 @@
 package com.quarantyne.core.lib;
 
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import com.google.common.collect.Maps;
 import com.quarantyne.core.util.CaseInsensitiveStringKV;
 import java.util.Map;
 import org.junit.Test;
-
-import static org.assertj.core.api.Assertions.*;
 
 public class FingerprinterTest {
   @Test

@@ -1,11 +1,11 @@
 package com.quarantyne.core.util;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneId;
 import org.junit.Test;
-
-import static org.assertj.core.api.Assertions.*;
 
 public class ExponentialBackOffTest {
 

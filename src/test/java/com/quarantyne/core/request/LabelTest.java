@@ -1,9 +1,9 @@
 package com.quarantyne.core.request;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import com.quarantyne.core.classifiers.Label;
 import org.junit.Test;
-
-import static org.assertj.core.api.Assertions.*;
 
 public class LabelTest {
 
