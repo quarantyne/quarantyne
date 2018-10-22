@@ -11,6 +11,7 @@ Quarantyne to incorporate, like not triggering analytics or flagging an order fo
 - [Quick Run](#quick-run)
 - [Configuration](#configuration)
 - [Features](#features)
+- [Metrics](#metrics)
 - [License](#license)
 
 ## Requirements
@@ -80,6 +81,9 @@ from reaching your servers, saving you resources, metrics skew,
 and spam data scrubs. Instead of proxying the request to your server, 
 Quarantyne can either display an internal error, or fetch and display 
 a static page at the URL of your choice. 
+
+### Metrics & health reporting
+Quarantyne binds to an internal `adminPort`, where metrics (latencies, success rate...) as well as the health of the proxy are reported. 
 
 ### HTTPS + HTTP/2 Support [partial support]
 Only HTTP requests proxied by Quarantyne to your service support SSL. 
