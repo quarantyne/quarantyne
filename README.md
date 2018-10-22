@@ -68,8 +68,8 @@ __DMX__ | Disposable Email | in progress
 __IPR__ | IP Address Rotation | in progress
 __HDR__ | Suspicious Request Headers| in progress
 __USR__ | Suspicious User-Agent | in progress
-__PCX__ | Public Cloud Execution |
-
+__PCX__ | Public Cloud Execution | in progress
+__IPA__ | IP Anomyal | in progress
 ### Fraud redirection [in progress...]
 Quarantyne can be configured to handle fraud by itself and stop requests 
 from reaching your servers, saving you resources, metrics skew, 
