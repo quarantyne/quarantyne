@@ -60,16 +60,20 @@ externalizes this burden for you.
 
 |Label | Definition | Behavior | Implemented |
  ----- | :-------: | :-----: | :---
-__LBD__ | Large Body Data  | in progress
-__FAS__ | Fast Browsing | in progress
-__FAS__ | Fast Browsing| in progress
-__CPW__ | Compromised Password | in progress
-__DMX__ | Disposable Email | in progress
-__IPR__ | IP Address Rotation | in progress
-__HDR__ | Suspicious Request Headers| in progress
-__USR__ | Suspicious User-Agent | in progress
-__PCX__ | Public Cloud Execution | in progress
-__IPD__ | IP/Country discrepancy | in progress
+__LBD__ | Large Body Data  | Overload target's form processor with POST/PUT request with body > 1MB | yes
+__FAS__ | Fast Browsing | Request rate faster than regular human browsing | yes
+__CPW__ | Compromised Password | Password used is known from previous data breach | yes
+__DMX__ | Disposable Email | Email used is a disposable emails service | yes
+__IPR__ | IP Address Rotation | Same visitor is rotating its IP addresses | no
+__AHD__ | Suspicious Request Headers| Abnormal HTTP Request headers  | yes
+__SUA__ | Suspicious User-Agent | User Agent not from a regular web browser | yes
+__PCX__ | Public Cloud Execution | IP address belongs to a public cloud service like AWS or GCP | no
+__IPD__ | IP/Country discrepancy | Country inferred from visitor IP is different from country field in submitted form | no
+
+Quarantyne add extra HTTP headers to the request it proxies to your service. For example, a curl request that does not spoof the user-agent field (among other things) will bear the following headers:
+
+- `X-Quarantyne-Labels: AHD,SUA`
+- `X-Quarantyne-RequestId: 08a0e31a-f1a5-4660-9316-0fdf5d2a959d`
 
 ### Fraud redirection [in progress...]
 Quarantyne can be configured to handle fraud by itself and stop requests 
