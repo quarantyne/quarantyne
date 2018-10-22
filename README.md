@@ -70,9 +70,9 @@ __SUA__ | Suspicious User-Agent | User Agent not from a regular web browser | ye
 __PCX__ | Public Cloud Execution | IP address belongs to a public cloud service like AWS or GCP | no
 __IPD__ | IP/Country discrepancy | Country inferred from visitor IP is different from country field in submitted form | no
 
-Quarantyne add extra HTTP headers to the request it proxies to your service. For example, a curl request that does not spoof the user-agent field (among other things) will bear the following headers:
+Quarantyne add extra HTTP headers to the request it proxies to your service. For example, an well-crafted HTTP request coming from AWS will bear the following headers:
 
-- `X-Quarantyne-Labels: AHD,SUA`
+- `X-Quarantyne-Labels: PCX`
 - `X-Quarantyne-RequestId: 08a0e31a-f1a5-4660-9316-0fdf5d2a959d`
 
 ### Fraud redirection [in progress...]
