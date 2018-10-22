@@ -30,7 +30,7 @@ $ java -jar build/libs/quarantyne.jar
 "2018-10-20T18:41:17.834-0700" [main] INFO com.quarantyne.proxy.Main - ==> admin   @ http://127.0.0.1:3231
 ```
 
-You are all set! The default configuration Quarantyne at 
+You are all set! The default configuration runs Quarantyne on 
 http://127.0.0.1:8080, and proxies traffic to http://httpbin.org.
 
 Send a few requests to http://127.0.0.1:8080/headers via various means, and
