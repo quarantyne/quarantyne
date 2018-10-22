@@ -19,10 +19,10 @@ Quarantyne to incorporate, like not triggering analytics or flagging an order fo
 - Web traffic
 
 ## Quick run
-Quarantyne ships as a single 0-dependencies executable jar. 
+Quarantyne ships as a single 0-dependencies executable jar. Clone this repo and run the following
 
 ```bash
-$ java -jar build/libs/quarantyne.jar
+$ ./gradlew run
 
 "2018-10-20T18:41:17.830-0700" [main] INFO com.quarantyne.proxy.Main - ==> quarantyne
 "2018-10-20T18:41:17.833-0700" [main] INFO com.quarantyne.proxy.Main - ==> proxy   @ 127.0.0.1:8080
