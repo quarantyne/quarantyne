@@ -19,7 +19,6 @@ Quarantyne to incorporate, like not triggering analytics or flagging an order fo
 
 ## Quick run
 Quarantyne ships as a single 0-dependencies executable jar. 
-Download a release and run
 
 ```bash
 $ java -jar build/libs/quarantyne.jar
