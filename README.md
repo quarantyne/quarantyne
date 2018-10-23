@@ -65,10 +65,11 @@ __FAS__ | Fast Browsing | Request rate faster than regular human browsing | yes
 __CPW__ | Compromised Password | Password used is known from previous data breach. Possible account takeover | yes
 __DMX__ | Disposable Email | Email used is a disposable emails service | yes
 __IPR__ | IP Address Rotation | Same visitor is rotating its IP addresses | no
-__AHD__ | Suspicious Request Headers| Abnormal HTTP Request headers  | yes
+__SHD__ | Suspicious Request Headers| Abnormal HTTP Request headers  | yes
 __SUA__ | Suspicious User-Agent | User Agent not from a regular web browser | yes
 __PCX__ | Public Cloud Execution | IP address belongs to a public cloud service like AWS or GCP | no
-__IPD__ | IP/Country discrepancy | Country inferred from visitor IP is different from country field in submitted form | no
+__IPD__ | IP/Country discrepancy | Country inferred from visitor IP is different from country field in submitted request | no
+__SGE__ | Suscpicious Geolocation | This request is not usually received from this geolocation. Possible account takeover. | no
 
 Quarantyne add extra HTTP headers to the request it proxies to your service. For example, an well-crafted HTTP request coming from AWS will bear the following headers:
 
