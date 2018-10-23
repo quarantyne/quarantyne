@@ -62,7 +62,7 @@ externalizes this burden for you.
  ----- | :-------: | :-----: | :---
 __LBD__ | Large Body Data  | Overload target's form processor with POST/PUT request with body > 1MB | yes
 __FAS__ | Fast Browsing | Request rate faster than regular human browsing | yes
-__CPW__ | Compromised Password | Password used is known from previous data breach | yes
+__CPW__ | Compromised Password | Password used is known from previous data breach. Possible account takeover | yes
 __DMX__ | Disposable Email | Email used is a disposable emails service | yes
 __IPR__ | IP Address Rotation | Same visitor is rotating its IP addresses | no
 __AHD__ | Suspicious Request Headers| Abnormal HTTP Request headers  | yes
