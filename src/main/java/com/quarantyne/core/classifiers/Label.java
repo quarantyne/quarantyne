@@ -21,8 +21,11 @@ public class Label {
   public static Set<Label> COMPROMISED_PASSWORD = Sets.newHashSet(new Label("CPW"));
   public static Set<Label> DISPOSABLE_EMAIL = Sets.newHashSet(new Label("DMX"));
   public static Set<Label> IP_ROTATION = Sets.newHashSet(new Label("IPR"));
-  public static Set<Label> SUSPICIOUS_HEADERS = Sets.newHashSet(new Label("HDR"));
-  public static Set<Label> SUSPICIOUS_UA = Sets.newHashSet(new Label("USR"));
+  public static Set<Label> SUSPICIOUS_HEADERS = Sets.newHashSet(new Label("SHR"));
+  public static Set<Label> SUSPICIOUS_UA = Sets.newHashSet(new Label("SUA"));
+  public static Set<Label> PUBLIC_CLOUD_EXECUTION = Sets.newHashSet(new Label("PCX"));
+  public static Set<Label> IP_COUNTRY_DISCREPANCY = Sets.newHashSet(new Label("IPD"));
+  public static Set<Label> SUSPICIOUS_GEO = Sets.newHashSet(new Label("SGE"));
 
   @Override
   public String toString() {

@@ -13,8 +13,6 @@ import lombok.extern.slf4j.Slf4j;
 // TODO maybe migrate to jackson from gson?
 @Slf4j
 public final class HttpRequestBodyParser {
-  private static String JSON = "application/json";
-  private static String MULTIPART = "form-data/x-url-encoded";
   private static String AMP_SEP = "&";
   private static String EQ_SEP = "=";
   private static String SEMICOL = ";";
@@ -46,19 +44,19 @@ public final class HttpRequestBodyParser {
     Charset charset = getCharset(contentType);
     if (isJson(contentType)) {
       parsedBody = parseAsJson(new String(body, charset));
-    } else if (isMultipart(contentType)) {
-      parsedBody = parseAsMultipart(new String(body, charset));
+    } else if (isUrlEncoded(contentType)) {
+      parsedBody = parseAsUrlEncoded(new String(body, charset));
     } else {
       parsedBody = null;
     }
     return new HttpRequestBody(body, contentType, parsedBody);
   }
   private static boolean isJson(String contentType) {
-    return contentType.equals(JSON);
+    return contentType.equals(HttpHeaderValue.CONTENT_TYPE_JSON);
   }
 
-  private static boolean isMultipart(String contentType) {
-    return contentType.equals(MULTIPART);
+  private static boolean isUrlEncoded(String contentType) {
+    return contentType.equals(HttpHeaderValue.CONTENT_TYPE_URLENCODED);
   }
 
   private static Map<String, Object> parseAsJson(String body) {
@@ -70,7 +68,7 @@ public final class HttpRequestBodyParser {
     }
   }
 
-  private static Map<String, Object> parseAsMultipart(String body) {
+  private static Map<String, Object> parseAsUrlEncoded(String body) {
     String[] tokens = body.split(AMP_SEP);
     if (tokens.length > 0) {
       Map<String, Object> map = Maps.newHashMap();
@@ -79,12 +77,12 @@ public final class HttpRequestBodyParser {
         if (kv.length == 2) {
           map.put(kv[0], kv[1]);
         } else {
-          log.warn("parseAsMultipart: unexpected key/value token: {}", body);
+          log.warn("parseAsUrlEncoded: unexpected key/value token: {}", body);
         }
       }
       return map;
     } else {
-      log.warn("parseAsMultipart: no multipart data found {}", body);
+      log.warn("parseAsUrlEncoded: no multipart data found {}", body);
       return null;
     }
   }

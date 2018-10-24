@@ -14,7 +14,7 @@ public class HttpRequestBody {
   private final String contentType;
   private final Map<String, Object> parsedBody;
 
-  HttpRequestBody(byte[] body, String contentType, Map<String, Object> parsedBody) {
+  public HttpRequestBody(byte[] body, String contentType, Map<String, Object> parsedBody) {
     this.body = body;
     this.contentType = contentType;
     this.parsedBody = parsedBody;

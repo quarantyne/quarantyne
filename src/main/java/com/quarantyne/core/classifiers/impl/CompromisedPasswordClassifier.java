@@ -1,5 +1,6 @@
 package com.quarantyne.core.classifiers.impl;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
 import com.google.common.hash.BloomFilter;
@@ -15,6 +16,9 @@ public class CompromisedPasswordClassifier implements HttpRequestWithBodyClassif
   private BloomFilter<String> compromisedPasswordBloomFilter;
   private static String NULL_CHECK = "httpRequest {} or requestBody {} is null";
   private static String PASSWORD_KEY = "password";
+
+  @VisibleForTesting
+  static Set<String> passwordFieldKey = Sets.newHashSet("password", "pass", "pw");
 
   public CompromisedPasswordClassifier(BloomFilter<String> compromisedPasswordBloomFilter) {
     this.compromisedPasswordBloomFilter = compromisedPasswordBloomFilter;
