@@ -12,17 +12,16 @@ import com.quarantyne.core.lib.HttpRequest;
 import io.vertx.core.json.JsonObject;
 import org.junit.Test;
 
-public class CompromisedPasswordClassifierTest {
+public class DisposableEmailClassifierTest {
 
   @Test
   public void testClassifier() {
     BloomFilter<String> bloom =
-        BloomFilter.create(Funnels.stringFunnel(Charsets.UTF_8), 3);
-    bloom.put("alpha");
-    bloom.put("bravo");
-    bloom.put("charlie");
+        BloomFilter.create(Funnels.stringFunnel(Charsets.UTF_8), 2);
+    bloom.put("disposable.com");
+    bloom.put("junk.com");
 
-    CompromisedPasswordClassifier classifier = new CompromisedPasswordClassifier(bloom);
+    DisposableEmailClassifier classifier = new DisposableEmailClassifier(bloom);
     HttpRequest defaultRequest = TestHttpRequest.REQ();
 
     // null empty
@@ -35,11 +34,11 @@ public class CompromisedPasswordClassifierTest {
 
     // a key matches password but password is not in bloomf
     assertThat(classifier.classify(defaultRequest,
-        TestHttpRequestBody.make(new JsonObject().put("password", "delta")))).isEmpty();
+        TestHttpRequestBody.make(new JsonObject().put("email", "john@gmail.com")))).isEmpty();
 
     // match
     assertThat(classifier.classify(defaultRequest,
-        TestHttpRequestBody.make(new JsonObject().put("password", "bravo")))).isEqualTo(
-            Label.COMPROMISED_PASSWORD);
+        TestHttpRequestBody.make(new JsonObject().put("email", "spammy@disposable.com")))).isEqualTo(
+        Label.DISPOSABLE_EMAIL);
   }
 }

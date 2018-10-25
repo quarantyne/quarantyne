@@ -8,14 +8,15 @@ import com.quarantyne.core.classifiers.Label;
 import com.quarantyne.core.lib.HttpRequest;
 import com.quarantyne.core.lib.HttpRequestBody;
 import java.util.Set;
+import java.util.regex.Pattern;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class DisposableEmailClassifier implements HttpRequestWithBodyClassifier {
   private BloomFilter<String> disposableEmailBf;
-  private static String NULL_CHECK = "httpRequest {} or requestBody {} is null";
-  private static String EMAIL_KEY = "email";
-
+  private static final String NULL_CHECK = "httpRequest {} or requestBody {} is null";
+  private static final String EMAIL_KEY = "email";
+  private static final Pattern p = Pattern.compile("@");
   public DisposableEmailClassifier(BloomFilter<String> disposableEmailBf) {
     this.disposableEmailBf = disposableEmailBf;
   }
@@ -28,8 +29,11 @@ public class DisposableEmailClassifier implements HttpRequestWithBodyClassifier 
     }
 
     final String email = body.get(EMAIL_KEY);
-    if (!Strings.isNullOrEmpty(email) && disposableEmailBf.mightContain(email)) {
-      return Sets.newHashSet(Label.DISPOSABLE_EMAIL);
+    if (!Strings.isNullOrEmpty(email)) {
+      String[] emailParts = p.split(email);
+      if (emailParts.length == 2 && disposableEmailBf.mightContain(emailParts[1])) {
+        return Sets.newHashSet(Label.DISPOSABLE_EMAIL);
+      }
     }
     return EMPTY_LABELS;
   }

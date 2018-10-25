@@ -26,7 +26,7 @@ public class TestHttpRequest {
     return new CaseInsensitiveStringKV(h);
   }
 
-  public static HttpRequest REQ = new Builder().build();
+  public static HttpRequest REQ() { return new Builder().build(); }
 
   public static class Builder {
     HttpRequestMethod method = HttpRequestMethod.GET;

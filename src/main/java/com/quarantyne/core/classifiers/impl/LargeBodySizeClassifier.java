@@ -10,7 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class LargeBodySizeClassifier implements HttpRequestWithBodyClassifier {
 
-  private static int MAX_SIZE_BYTES = 1_024 * 1000;
+  protected static int MAX_SIZE_BYTES = 1_024 * 1000;
 
   @Override
   public Set<Label> classify(final HttpRequest httpRequest, final HttpRequestBody body) {
