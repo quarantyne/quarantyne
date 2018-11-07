@@ -1,11 +1,7 @@
 # quarantyne [![Build Status](https://travis-ci.org/quarantyne/quarantyne.svg?branch=master)](https://travis-ci.org/quarantyne/quarantyne) 
 __Automated Web Security made simple__
 
-__TL;DR__ Quarantyne is a reverse-proxy that looks for signs of 
-fraudulent behavior in web traffic. If detected, 
-the fraudulent act is labelled in real-time via HTTP request headers injection, 
-like `X-Quarantyne-Labels: FAS,HDR` for your HTTP service(s) running behind 
-Quarantyne to incorporate, like not triggering analytics or flagging an order for second-review.
+__TL;DR__ Quarantyne is a reverse-proxy that automates web security for you. Fraudulent behavior, application misuse and cyber-attacks are detected in real-time and identified via HTTP request headers injection.
 
 - [Requirements](#requirements)
 - [Quick Run](#quick-run)
