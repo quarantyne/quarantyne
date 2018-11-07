@@ -1,5 +1,5 @@
 # quarantyne [![Build Status](https://travis-ci.org/quarantyne/quarantyne.svg?branch=master)](https://travis-ci.org/quarantyne/quarantyne) 
-__Fast and unobtrusive web fraud detection and labelling.__
+__Automated Web Security made simple__
 
 __TL;DR__ Quarantyne is a reverse-proxy that looks for signs of 
 fraudulent behavior in web traffic. If detected, 
