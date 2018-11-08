@@ -23,13 +23,14 @@ public final class WarmupVerticle extends AbstractVerticle {
     this.httpClient = vertx.createHttpClient();
     Future<Void> warmupFront = warmup(proxyConfig.getProxyHost(), proxyConfig.getProxyPort());
     Future<Void> warmupBack = warmup(proxyConfig.getRemoteHost(), proxyConfig.getRemotePort());
-    CompositeFuture.join(warmupFront, warmupBack).setHandler(h -> {
-      if (h.succeeded()) {
-        startFuture.complete();
-      } else {
-        startFuture.fail(h.cause());
-      }
+    vertx.setPeriodic(2000, h -> {
+      CompositeFuture.join(warmupFront, warmupBack).setHandler(timer -> {
+        if (timer.succeeded()) {
+          startFuture.complete();
+        }
+      });
     });
+
   }
 
   private Future<Void> warmup(String host, int port) {
@@ -56,7 +57,8 @@ public final class WarmupVerticle extends AbstractVerticle {
 
   @Override
   public void stop() {
-    log.info("shutting down http warmup client");
+    log.debug("shutting down http warmup client");
+    log.info("==> ready");
     httpClient.close();
   }
 }

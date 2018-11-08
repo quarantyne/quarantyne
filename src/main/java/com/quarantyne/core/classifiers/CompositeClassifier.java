@@ -6,6 +6,7 @@ import com.quarantyne.core.lib.HttpRequestBody;
 import com.quarantyne.core.lib.HttpResponse;
 import java.util.List;
 import java.util.Set;
+import javax.annotation.Nullable;
 
 
 public class CompositeClassifier implements HttpRequestClassifier {
@@ -18,7 +19,7 @@ public class CompositeClassifier implements HttpRequestClassifier {
   }
 
   @Override
-  public Set<Label> classify(final HttpRequest request, HttpRequestBody body) {
+  public Set<Label> classify(final HttpRequest request, @Nullable HttpRequestBody body) {
     Set<Label> labels = Sets.newHashSet();
     httpRequestClassifiers
         .stream()
@@ -30,7 +31,7 @@ public class CompositeClassifier implements HttpRequestClassifier {
 
   @Override
   public void record(HttpResponse response, HttpRequest request,
-      HttpRequestBody body) {
+      @Nullable HttpRequestBody body) {
     httpRequestClassifiers
         .stream()
         .filter(c -> c.test(request, body))

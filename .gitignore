@@ -27,3 +27,4 @@ hs_err_pid*
 build/
 .gradle/
 out/
+.pid.lock

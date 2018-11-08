@@ -12,6 +12,7 @@ import com.quarantyne.core.lib.HttpRequestBody;
 import java.util.Set;
 import java.util.function.Supplier;
 import java.util.regex.Pattern;
+import javax.annotation.Nullable;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -51,7 +52,7 @@ public class DisposableEmailClassifier implements HttpRequestClassifier {
 
 
   @Override
-  public boolean test(final HttpRequest httpRequest, final HttpRequestBody body) {
+  public boolean test(final HttpRequest httpRequest, @Nullable final HttpRequestBody body) {
     return isWriteRequest(httpRequest)
         && hasBody(body);
   }

@@ -1,0 +1,31 @@
+plugins {
+    id 'java'
+    id 'com.wiredforcode.spawn' version '0.8.2'
+}
+
+apply plugin: 'java'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+def restAssuredVersion = '3.2.0'
+dependencies {
+    testCompile group: 'com.google.guava', name: 'guava', version: guavaVersion
+    testCompile group: 'io.rest-assured', name: 'rest-assured', version: restAssuredVersion
+    testCompile group: 'io.rest-assured', name: 'json-path', version: restAssuredVersion
+    testCompile group: 'junit', name: 'junit', version: junitVersion
+    testCompile group: 'io.vertx', name: 'vertx-core', version: vertxVersion
+
+}
+
+task startServer(type: SpawnProcessTask, dependsOn: ':build') {
+    command "java -jar ${rootDir}/build/libs/quarantyne.jar"
+    ready '==> ready'
+}
+
+test.dependsOn startServer
+task stopServer(type: KillProcessTask)
+test.finalizedBy(stopServer)

@@ -28,6 +28,7 @@ import io.vertx.core.http.HttpServerResponse;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.Supplier;
+import javax.annotation.Nullable;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -56,7 +57,7 @@ public final class ProxyVerticle extends AbstractVerticle {
     // http client to remote
     HttpClientOptions httpClientOptions = new HttpClientOptions();
     httpClientOptions.setKeepAlive(true);
-    httpClientOptions.setLogActivity(false);
+    httpClientOptions.setLogActivity(true);
 
     if (proxyConfig.getSsl() | proxyConfig.getRemotePort() == 443) {
       httpClientOptions.setSsl(true);
@@ -74,13 +75,9 @@ public final class ProxyVerticle extends AbstractVerticle {
       } else {
         proxiedRequestHandler(frontReq, null);
       }
-    });
-
-    httpServer.exceptionHandler(ex -> {
+    }).exceptionHandler(ex -> {
       log.error("HTTP server error", ex);
-    });
-
-    httpServer.listen(proxyConfig.getProxyPort(), proxyConfig.getProxyHost(), h -> {
+    }).listen(proxyConfig.getProxyPort(), proxyConfig.getProxyHost(), h -> {
       if (h.failed()) {
         log.error("proxy failed to start", h.cause());
         startFuture.fail(h.cause());
@@ -88,7 +85,7 @@ public final class ProxyVerticle extends AbstractVerticle {
     });
   }
 
-  private void proxiedRequestHandler(HttpServerRequest frontReq, Buffer frontReqBody) {
+  private void proxiedRequestHandler(HttpServerRequest frontReq, @Nullable Buffer frontReqBody) {
     HttpServerResponse frontRep = frontReq.response();
     HttpClientRequest backReq = httpClient.request(
         frontReq.method(),
@@ -104,10 +101,9 @@ public final class ProxyVerticle extends AbstractVerticle {
         frontReq.remoteAddress().host(),
         frontReq.path()
     );
-    HttpRequestMethod method = qReq.getMethod();
-    HttpRequestBody qBody = method.equals(HttpRequestMethod.POST) || method.equals(HttpRequestMethod.PUT) ?
-        HttpRequestBodyParser.parse(frontReqBody.getBytes(), frontReq.getHeader(HttpHeaders.CONTENT_TYPE)) :
-        null;
+    @Nullable final HttpRequestBody qBody =
+        getBody(qReq.getMethod(), frontReqBody, frontReq.getHeader(HttpHeaders.CONTENT_TYPE));
+
     backReq.headers().addAll(quarantyneCheck(qReq, qBody));
     // --------------------------------
     backReq.handler(backRep -> {
@@ -139,14 +135,7 @@ public final class ProxyVerticle extends AbstractVerticle {
   // returns quarantyne headers
 
   private MultiMap quarantyneCheck(HttpRequest req, HttpRequestBody body) {
-    Set<Label> quarantyneLabels;
-    if (body != null) {
-      quarantyneLabels = quarantyneClassifier.classify(
-          req,
-          body);
-    } else {
-      quarantyneLabels = quarantyneClassifier.classify(req, null);
-    }
+    Set<Label> quarantyneLabels = quarantyneClassifier.classify(req, body);
 
     MultiMap quarantyneHeaders = MultiMap.caseInsensitiveMultiMap();
     if (!quarantyneLabels.isEmpty()) {
@@ -154,5 +143,20 @@ public final class ProxyVerticle extends AbstractVerticle {
       quarantyneHeaders.add(QuarantyneHeaders.TRACE_ID, UUID.randomUUID().toString());
     }
     return quarantyneHeaders;
+  }
+
+  @Nullable
+  private HttpRequestBody getBody(
+      HttpRequestMethod method,
+      @Nullable Buffer frontReqBody,
+      @Nullable String contentType) {
+    if (frontReqBody != null && contentType != null &&
+        (method.equals(HttpRequestMethod.POST)
+            || method.equals(HttpRequestMethod.PUT)
+            || method.equals(HttpRequestMethod.PATCH))) {
+      return HttpRequestBodyParser.parse(frontReqBody.getBytes(), contentType);
+    } else {
+      return null;
+    }
   }
 }

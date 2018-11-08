@@ -12,6 +12,7 @@ import com.quarantyne.core.lib.HttpRequest;
 import com.quarantyne.core.lib.HttpRequestBody;
 import java.util.Set;
 import java.util.function.Supplier;
+import javax.annotation.Nullable;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -56,7 +57,7 @@ public class CompromisedPasswordClassifier implements HttpRequestClassifier {
   }
 
   @Override
-  public boolean test(final HttpRequest httpRequest, final HttpRequestBody body) {
+  public boolean test(final HttpRequest httpRequest, @Nullable final HttpRequestBody body) {
     boolean shouldRunOnPath = config.get().getLoginAction().matchesPath(httpRequest.getPath())
         ||  config.get().getRegisterAction().matchesPath(httpRequest.getPath());
 

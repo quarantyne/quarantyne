@@ -10,6 +10,7 @@ import com.quarantyne.core.lib.HttpRequest;
 import com.quarantyne.core.lib.HttpRequestBody;
 import java.time.Duration;
 import java.util.Set;
+import javax.annotation.Nullable;
 
 /**
  * Assumes that, in a 10 seconds window, two identical sets of headers are from the same agent
@@ -26,7 +27,7 @@ public class IpRotationClassifier implements HttpRequestClassifier {
   }
 
   @Override
-  public Set<Label> classify(HttpRequest httpRequest, HttpRequestBody body) {
+  public Set<Label> classify(HttpRequest httpRequest, @Nullable HttpRequestBody body) {
     String requestIp = httpRequest.getRemoteAddress();
     HashCode headersHashcode = Fingerprinter.fromHeaders(httpRequest.getHeaders());
     String seenIp = lastSeenCache.getIfPresent(headersHashcode);

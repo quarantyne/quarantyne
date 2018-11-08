@@ -12,6 +12,7 @@ import com.quarantyne.core.lib.HttpRequestBody;
 import com.quarantyne.core.util.ExponentialBackOff;
 import java.time.Duration;
 import java.util.Set;
+import javax.annotation.Nullable;
 
 public class FastAgentClassifier implements HttpRequestClassifier {
 
@@ -31,7 +32,7 @@ public class FastAgentClassifier implements HttpRequestClassifier {
   }
 
   @Override
-  public Set<Label> classify(final HttpRequest httpRequest, final HttpRequestBody body) {
+  public Set<Label> classify(final HttpRequest httpRequest, @Nullable final HttpRequestBody body) {
     HashCode id = Fingerprinter.fromString(httpRequest.getRemoteAddress());
     ExponentialBackOff backoff = penaltyBoxCache.getIfPresent(id);
     if (backoff != null) {

@@ -96,15 +96,15 @@ public class Main {
 
     CompositeClassifier quarantyneRequestClassifier = new CompositeClassifier(httpRequestClassifierList);
 
-
     vertx.deployVerticle(new AdminVerticle(proxyConfig));
 
     vertx.deployVerticle(() -> new ProxyVerticle(proxyConfig, quarantyneRequestClassifier, configReader),
-        new DeploymentOptions().setInstances(numCpus * 2),
-        proxyVerticle -> {
-          vertx.deployVerticle(() -> new WarmupVerticle(proxyConfig),
-              new DeploymentOptions(),
-              warmupVerticle -> vertx.undeploy(warmupVerticle.result()));
+        new DeploymentOptions().setInstances(numCpus * 2));
+
+    vertx.deployVerticle(() -> new WarmupVerticle(proxyConfig),
+        new DeploymentOptions(),
+        warmupVerticle -> {
+          vertx.undeploy(warmupVerticle.result());
         });
   }
 
