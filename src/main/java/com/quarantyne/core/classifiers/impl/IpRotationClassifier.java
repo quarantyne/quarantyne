@@ -7,6 +7,7 @@ import com.quarantyne.core.classifiers.HttpRequestClassifier;
 import com.quarantyne.core.classifiers.Label;
 import com.quarantyne.core.lib.Fingerprinter;
 import com.quarantyne.core.lib.HttpRequest;
+import com.quarantyne.core.lib.HttpRequestBody;
 import java.time.Duration;
 import java.util.Set;
 
@@ -25,7 +26,7 @@ public class IpRotationClassifier implements HttpRequestClassifier {
   }
 
   @Override
-  public Set<Label> classify(HttpRequest httpRequest) {
+  public Set<Label> classify(HttpRequest httpRequest, HttpRequestBody body) {
     String requestIp = httpRequest.getRemoteAddress();
     HashCode headersHashcode = Fingerprinter.fromHeaders(httpRequest.getHeaders());
     String seenIp = lastSeenCache.getIfPresent(headersHashcode);
@@ -37,4 +38,5 @@ public class IpRotationClassifier implements HttpRequestClassifier {
     lastSeenCache.put(headersHashcode, requestIp);
     return EMPTY_LABELS;
   }
+
 }

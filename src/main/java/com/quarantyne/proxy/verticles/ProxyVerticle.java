@@ -1,13 +1,17 @@
 package com.quarantyne.proxy.verticles;
 
 import com.google.common.base.Joiner;
+import com.quarantyne.config.Config;
 import com.quarantyne.core.classifiers.CompositeClassifier;
 import com.quarantyne.core.classifiers.Label;
 import com.quarantyne.core.lib.HttpRequest;
+import com.quarantyne.core.lib.HttpRequestBody;
+import com.quarantyne.core.lib.HttpRequestBodyParser;
 import com.quarantyne.core.lib.HttpRequestMethod;
+import com.quarantyne.core.lib.HttpResponse;
 import com.quarantyne.core.util.CaseInsensitiveStringKV;
+import com.quarantyne.proxy.ProxyConfig;
 import com.quarantyne.proxy.QuarantyneHeaders;
-import com.quarantyne.proxy.ServerConfig;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Future;
 import io.vertx.core.MultiMap;
@@ -23,25 +27,29 @@ import io.vertx.core.http.HttpServerRequest;
 import io.vertx.core.http.HttpServerResponse;
 import java.util.Set;
 import java.util.UUID;
+import java.util.function.Supplier;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public final class ProxyVerticle extends AbstractVerticle {
-
-  private final ServerConfig serverConfig;
+  private final ProxyConfig proxyConfig;
   private final CompositeClassifier quarantyneClassifier;
   private HttpClient httpClient;
+  private Supplier<Config> configSupplier;
 
-  public ProxyVerticle(ServerConfig serverConfig, CompositeClassifier quarantyneClassifier) {
-    this.serverConfig = serverConfig;
+  public ProxyVerticle(ProxyConfig proxyConfig,
+      CompositeClassifier quarantyneClassifier,
+      Supplier<Config> configSupplier) {
+    this.proxyConfig = proxyConfig;
     this.quarantyneClassifier = quarantyneClassifier;
+    this.configSupplier = configSupplier;
   }
 
   @Override
   public void start(Future<Void> startFuture) {
     // proxy server (this server)
     HttpServerOptions httpServerOptions = new HttpServerOptions();
-    httpServerOptions.setHost(serverConfig.getProxyHost());
+    httpServerOptions.setHost(proxyConfig.getProxyHost());
     httpServerOptions.setUsePooledBuffers(true);
     HttpServer httpServer = vertx.createHttpServer(httpServerOptions);
 
@@ -50,11 +58,11 @@ public final class ProxyVerticle extends AbstractVerticle {
     httpClientOptions.setKeepAlive(true);
     httpClientOptions.setLogActivity(false);
 
-    if (serverConfig.getSsl() | serverConfig.getRemotePort() == 443) {
+    if (proxyConfig.getSsl() | proxyConfig.getRemotePort() == 443) {
       httpClientOptions.setSsl(true);
     }
-    httpClientOptions.setDefaultHost(serverConfig.getRemoteHost());
-    httpClientOptions.setDefaultPort(serverConfig.getRemotePort());
+    httpClientOptions.setDefaultHost(proxyConfig.getRemoteHost());
+    httpClientOptions.setDefaultPort(proxyConfig.getRemotePort());
 
     this.httpClient = vertx.createHttpClient(httpClientOptions);
 
@@ -72,7 +80,7 @@ public final class ProxyVerticle extends AbstractVerticle {
       log.error("HTTP server error", ex);
     });
 
-    httpServer.listen(serverConfig.getProxyPort(), serverConfig.getProxyHost(), h -> {
+    httpServer.listen(proxyConfig.getProxyPort(), proxyConfig.getProxyHost(), h -> {
       if (h.failed()) {
         log.error("proxy failed to start", h.cause());
         startFuture.fail(h.cause());
@@ -88,14 +96,27 @@ public final class ProxyVerticle extends AbstractVerticle {
     );
 
     backReq.headers().setAll(frontReq.headers());
-    backReq.headers().set(HttpHeaders.HOST, serverConfig.getRemoteHost());
+    backReq.headers().set(HttpHeaders.HOST, proxyConfig.getRemoteHost());
     // inject quarantyne headers, if any
-    backReq.headers().addAll(quarantyneCheck(frontReq, frontReqBody));
+    HttpRequest qReq = new HttpRequest(
+        HttpRequestMethod.valueOf(frontReq.method().toString().toUpperCase()),
+        new CaseInsensitiveStringKV(frontReq.headers().entries()),
+        frontReq.remoteAddress().host(),
+        frontReq.path()
+    );
+    HttpRequestMethod method = qReq.getMethod();
+    HttpRequestBody qBody = method.equals(HttpRequestMethod.POST) || method.equals(HttpRequestMethod.PUT) ?
+        HttpRequestBodyParser.parse(frontReqBody.getBytes(), frontReq.getHeader(HttpHeaders.CONTENT_TYPE)) :
+        null;
+    backReq.headers().addAll(quarantyneCheck(qReq, qBody));
     // --------------------------------
     backReq.handler(backRep -> {
       Buffer body = Buffer.buffer();
       backRep.handler(body::appendBuffer);
       backRep.endHandler(h -> {
+        // callback quarantyne with data to record, if needed
+        quarantyneClassifier.record(new HttpResponse(backRep.statusCode()), qReq, qBody);
+        // --------------------------------
         frontRep.setStatusCode(backRep.statusCode());
         frontRep.headers().setAll(backRep.headers());
         frontRep.end(body);
@@ -116,19 +137,18 @@ public final class ProxyVerticle extends AbstractVerticle {
   private Joiner joiner = Joiner.on(",");
 
   // returns quarantyne headers
-  private MultiMap quarantyneCheck(HttpServerRequest req) {
-    return quarantyneCheck(req, Buffer.buffer());
-  }
 
-  private MultiMap quarantyneCheck(HttpServerRequest req, Buffer body) {
-    HttpRequest httpRequest = new HttpRequest(
-        HttpRequestMethod.valueOf(req.method().toString().toUpperCase()),
-        new CaseInsensitiveStringKV(req.headers().entries()),
-        req.remoteAddress().host(),
-        req.path()
-    );
+  private MultiMap quarantyneCheck(HttpRequest req, HttpRequestBody body) {
+    Set<Label> quarantyneLabels;
+    if (body != null) {
+      quarantyneLabels = quarantyneClassifier.classify(
+          req,
+          body);
+    } else {
+      quarantyneLabels = quarantyneClassifier.classify(req, null);
+    }
+
     MultiMap quarantyneHeaders = MultiMap.caseInsensitiveMultiMap();
-    Set<Label> quarantyneLabels = quarantyneClassifier.classify(httpRequest);
     if (!quarantyneLabels.isEmpty()) {
       quarantyneHeaders.add(QuarantyneHeaders.LABELS, joiner.join(quarantyneLabels));
       quarantyneHeaders.add(QuarantyneHeaders.TRACE_ID, UUID.randomUUID().toString());

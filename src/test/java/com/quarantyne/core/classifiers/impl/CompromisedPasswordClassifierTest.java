@@ -5,14 +5,18 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.google.common.base.Charsets;
 import com.google.common.hash.BloomFilter;
 import com.google.common.hash.Funnels;
+import com.quarantyne.config.Config;
+import com.quarantyne.config.QIdentityAction;
 import com.quarantyne.core.classifiers.Label;
 import com.quarantyne.core.classifiers.TestHttpRequest;
 import com.quarantyne.core.classifiers.TestHttpRequestBody;
 import com.quarantyne.core.lib.HttpRequest;
 import io.vertx.core.json.JsonObject;
+import java.util.function.Supplier;
 import org.junit.Test;
 
-public class CompromisedPasswordClassifierTest {
+public class CompromisedPasswordClassifierTest extends AbstractClassifierTest {
+
 
   @Test
   public void testClassifier() {
@@ -22,7 +26,11 @@ public class CompromisedPasswordClassifierTest {
     bloom.put("bravo");
     bloom.put("charlie");
 
-    CompromisedPasswordClassifier classifier = new CompromisedPasswordClassifier(bloom);
+    Supplier<Config> configSupplier = () -> Config.builder()
+        .loginAction(new QIdentityAction("/login", "email", "password"))
+        .registerAction(new QIdentityAction("/register", "email", "password"))
+        .build();
+    CompromisedPasswordClassifier classifier = new CompromisedPasswordClassifier(bloom, configSupplier);
     HttpRequest defaultRequest = TestHttpRequest.REQ();
 
     // null empty
@@ -38,7 +46,8 @@ public class CompromisedPasswordClassifierTest {
         TestHttpRequestBody.make(new JsonObject().put("password", "delta")))).isEmpty();
 
     // match
-    assertThat(classifier.classify(defaultRequest,
+    HttpRequest requestOnPath = new TestHttpRequest.Builder().setPath("/login").build();
+    assertThat(classifier.classify(requestOnPath,
         TestHttpRequestBody.make(new JsonObject().put("password", "bravo")))).isEqualTo(
             Label.COMPROMISED_PASSWORD);
   }

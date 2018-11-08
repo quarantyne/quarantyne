@@ -8,11 +8,12 @@ group 'com.quarantyne'
 apply plugin: 'java'
 sourceCompatibility = javaVersion
 
-version '1.0-SNAPSHOT'
+version "${version}"
 
 repositories {
     mavenCentral()
     jcenter()
+    maven { url 'https://jitpack.io' }
 }
 
 shadowDistTar.enabled = false
@@ -36,21 +37,26 @@ checkstyle {
     toolVersion = '8.12'
 }*/
 
-
+run {
+    if(project.hasProperty('args')){
+        args project.args.split(' ')
+    }
+}
 
 mainClassName = "com.quarantyne.proxy.Main"
 
 dependencies {
-    compile group: 'com.github.ben-manes.caffeine', name: 'caffeine', version: caffeineVersion
-    compile group: 'com.google.code.gson', name: 'gson', version: gsonVersion
-    compile group: 'com.google.guava', name: 'guava', version: guavaVersion
-    compileOnly group: 'org.projectlombok', name: 'lombok', version: lombokVersion
+    implementation group: 'com.github.ben-manes.caffeine', name: 'caffeine', version: caffeineVersion
+    implementation group: 'com.google.code.gson', name: 'gson', version: gsonVersion
+    implementation group: 'com.google.guava', name: 'guava', version: guavaVersion
+    implementation group: 'org.projectlombok', name: 'lombok', version: lombokVersion
     annotationProcessor group: 'org.projectlombok', name: 'lombok', version: lombokVersion
-    compile group: 'org.slf4j', name: 'slf4j-api', version: slf4jVersion
-    compile group: 'org.slf4j', name: 'slf4j-simple', version: slf4jVersion
-    compile group: 'io.vertx', name: 'vertx-core', version: vertxVersion
-    compile group: 'io.vertx', name: 'vertx-dropwizard-metrics', version: vertxVersion
-    compile group: 'com.beust', name: 'jcommander', version: jcommanderVersion
+    implementation group: 'org.slf4j', name: 'slf4j-api', version: slf4jVersion
+    implementation group: 'org.slf4j', name: 'slf4j-simple', version: slf4jVersion
+    implementation group: 'io.vertx', name: 'vertx-core', version: vertxVersion
+    implementation group: 'io.vertx', name: 'vertx-config', version: vertxVersion
+    implementation group: 'io.vertx', name: 'vertx-dropwizard-metrics', version: vertxVersion
+    implementation group: 'com.beust', name: 'jcommander', version: jcommanderVersion
 
     testImplementation group: 'io.vertx', name: 'vertx-unit', version: vertxVersion
     testImplementation group: 'junit', name: 'junit', version: junitVersion
@@ -58,6 +64,8 @@ dependencies {
     testImplementation group: 'org.slf4j', name: 'slf4j-simple', version: slf4jVersion
     testImplementation group: 'org.mockito', name: 'mockito-core', version: mockitoVersion
     testImplementation group: 'net.bytebuddy', name: 'byte-buddy', version: '1.9.1'
+
+    implementation 'com.github.quarantyne:geoip4j:1.0.5'
 }
 
 shadowJar {

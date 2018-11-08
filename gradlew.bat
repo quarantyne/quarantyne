@@ -46,12 +46,12 @@ echo location of your Java installation.
 goto fail
 
 :init
-@rem Get command-line serverConfig, handling Windows variants
+@rem Get command-line proxyConfig, handling Windows variants
 
 if not "%OS%" == "Windows_NT" goto win9xME_args
 
 :win9xME_args
-@rem Slurp the command line serverConfig.
+@rem Slurp the command line proxyConfig.
 set CMD_LINE_ARGS=
 set _SKIP=2
 

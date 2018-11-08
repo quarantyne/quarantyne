@@ -2,7 +2,7 @@ package com.quarantyne.proxy;
 
 import com.beust.jcommander.Parameter;
 
-public final class ServerConfig {
+public final class ProxyConfig {
   @Parameter(names = "--proxyPort", description = "proxy port")
   private Integer proxyPort = 8080;
 
@@ -21,6 +21,11 @@ public final class ServerConfig {
   @Parameter(names = "--adminPort", description = "internal port from which health and metrics are published")
   private Integer adminPort = 3231;
 
+  @Parameter(names = "--config-url", description = "URL to Quarantyne JSON configuration file eg. https://files.example.com/quarantyne.json")
+  private String configUrl = null;
+
+  @Parameter(names = "--config-file", description = "Absolute local path to Quarantyne JSON configuration file eg. /etc/quarantyne.json")
+  private String configFile = null;
 
   public Integer getProxyPort() {
     return proxyPort;
@@ -44,5 +49,13 @@ public final class ServerConfig {
 
   public Integer getAdminPort() {
     return adminPort;
+  }
+
+  public String getConfigUrl() {
+    return configUrl;
+  }
+
+  public String getConfigFile() {
+    return configFile;
   }
 }

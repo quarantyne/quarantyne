@@ -3,17 +3,20 @@ package com.quarantyne.proxy;
 import com.beust.jcommander.JCommander;
 import com.google.common.collect.Lists;
 import com.google.common.hash.BloomFilter;
+import com.quarantyne.config.ConfigReader;
 import com.quarantyne.core.bloom.BloomFilters;
 import com.quarantyne.core.classifiers.CompositeClassifier;
 import com.quarantyne.core.classifiers.HttpRequestClassifier;
-import com.quarantyne.core.classifiers.HttpRequestWithBodyClassifier;
 import com.quarantyne.core.classifiers.impl.CompromisedPasswordClassifier;
 import com.quarantyne.core.classifiers.impl.DisposableEmailClassifier;
 import com.quarantyne.core.classifiers.impl.FastAgentClassifier;
+import com.quarantyne.core.classifiers.impl.GeoDiscrepancyClassifier;
 import com.quarantyne.core.classifiers.impl.IpRotationClassifier;
 import com.quarantyne.core.classifiers.impl.LargeBodySizeClassifier;
 import com.quarantyne.core.classifiers.impl.SuspiciousRequestHeadersClassifier;
 import com.quarantyne.core.classifiers.impl.SuspiciousUserAgentClassifier;
+import com.quarantyne.geoip4j.GeoIp4j;
+import com.quarantyne.geoip4j.GeoIp4jImpl;
 import com.quarantyne.proxy.verticles.AdminVerticle;
 import com.quarantyne.proxy.verticles.ProxyVerticle;
 import com.quarantyne.proxy.verticles.WarmupVerticle;
@@ -37,9 +40,9 @@ public class Main {
   public static void main(String...args) {
     InternalLoggerFactory.setDefaultFactory(Slf4JLoggerFactory.INSTANCE);
 
-    ServerConfig serverConfig = new ServerConfig();
+    ProxyConfig proxyConfig = new ProxyConfig();
     JCommander jCommander = JCommander.newBuilder()
-        .addObject(serverConfig)
+        .addObject(proxyConfig)
         .build();
 
     // jCommander.usage();
@@ -53,29 +56,12 @@ public class Main {
       System.exit(-1);
     }
 
-    // quarantyne classifiers
-    List<HttpRequestClassifier> httpRequestClassifierList = Lists.newArrayList(
-        new FastAgentClassifier(),
-        new IpRotationClassifier(),
-        new SuspiciousRequestHeadersClassifier(),
-        new SuspiciousUserAgentClassifier()
-    );
-
-    List<HttpRequestWithBodyClassifier> httpRequestWithBodyClassifierList = Lists.newArrayList(
-        new LargeBodySizeClassifier(),
-        new CompromisedPasswordClassifier(weakOrBreachedPwBf),
-        new DisposableEmailClassifier(disposableMxBf)
-    );
-
-    CompositeClassifier quarantyneRequestClassifier = new CompositeClassifier(
-        httpRequestClassifierList,
-        httpRequestWithBodyClassifierList
-    );
+    final GeoIp4j geoIp4j = new GeoIp4jImpl();
 
     log.info("==> quarantyne");
-    log.info("==> proxy   @ {}:{}", serverConfig.getProxyHost(), serverConfig.getProxyPort());
-    log.info("==> remote  @ {}:{}", serverConfig.getRemoteHost(), serverConfig.getRemotePort());
-    log.info("==> admin   @ http://{}:{}", serverConfig.getProxyHost(), serverConfig.getAdminPort());
+    log.info("==> proxy   @ {}:{}", proxyConfig.getProxyHost(), proxyConfig.getProxyPort());
+    log.info("==> remote  @ {}:{}", proxyConfig.getRemoteHost(), proxyConfig.getRemotePort());
+    log.info("==> admin   @ http://{}:{}", proxyConfig.getProxyHost(), proxyConfig.getAdminPort());
 
     int numCpus = CpuCoreSensor.availableProcessors();
 
@@ -89,12 +75,34 @@ public class Main {
     log.debug("==> detected {} cpus core", numCpus);
     Vertx vertx = Vertx.vertx(vertxOptions);
 
-    vertx.deployVerticle(new AdminVerticle(serverConfig));
+    ConfigReader configReader = new ConfigReader(vertx, proxyConfig);
+    // require a config to start
+    if (configReader.get() == null) {
+      log.info("No quarantyne configuration was specified, using default settings");
+    }
 
-    vertx.deployVerticle(() -> new ProxyVerticle(serverConfig, quarantyneRequestClassifier),
+    // quarantyne classifiers
+    List<HttpRequestClassifier> httpRequestClassifierList = Lists.newArrayList(
+        new FastAgentClassifier(),
+        new IpRotationClassifier(),
+        new SuspiciousRequestHeadersClassifier(),
+        new SuspiciousUserAgentClassifier(),
+        new LargeBodySizeClassifier(),
+        new CompromisedPasswordClassifier(weakOrBreachedPwBf, configReader),
+        new DisposableEmailClassifier(disposableMxBf, configReader),
+        new GeoDiscrepancyClassifier(geoIp4j, configReader)
+        // new SuspiciousLoginActivityClassifier(geoIp4j)
+    );
+
+    CompositeClassifier quarantyneRequestClassifier = new CompositeClassifier(httpRequestClassifierList);
+
+
+    vertx.deployVerticle(new AdminVerticle(proxyConfig));
+
+    vertx.deployVerticle(() -> new ProxyVerticle(proxyConfig, quarantyneRequestClassifier, configReader),
         new DeploymentOptions().setInstances(numCpus * 2),
         proxyVerticle -> {
-          vertx.deployVerticle(() -> new WarmupVerticle(serverConfig),
+          vertx.deployVerticle(() -> new WarmupVerticle(proxyConfig),
               new DeploymentOptions(),
               warmupVerticle -> vertx.undeploy(warmupVerticle.result()));
         });

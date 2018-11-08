@@ -14,8 +14,8 @@ public class SuspiciousUserAgentClassifierTest {
   public void testClassifier() {
     SuspiciousUserAgentClassifier classifier = new SuspiciousUserAgentClassifier();
     HttpRequest req = TestHttpRequest.REQ();
-    assertThat(classifier.classify(req)).isEqualTo(Label.NONE);
+    assertThat(classifier.classify(req, null)).isEqualTo(Label.NONE);
     req.getHeaders().replace(HttpHeaders.USER_AGENT, "curl");
-    assertThat(classifier.classify(req)).isEqualTo(Label.SUSPICIOUS_UA);
+    assertThat(classifier.classify(req, null)).isEqualTo(Label.SUSPICIOUS_UA);
   }
 }

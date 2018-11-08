@@ -24,7 +24,7 @@ public class HttpRequestBodyParserTest {
     HttpRequestBody httpRequestBody = HttpRequestBodyParser.parse(
         "boo it's not json".getBytes(Charsets.ISO_8859_1),
         JSON);
-    assertThat(httpRequestBody.get("key")).isNull();
+    assertThat(httpRequestBody).isNull();
   }
 
   @Test

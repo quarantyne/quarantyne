@@ -17,12 +17,12 @@ public class SuspiciousRequestHeadersClassifierTest {
   public void testClassifier() {
     SuspiciousRequestHeadersClassifier classifier = new SuspiciousRequestHeadersClassifier();
     HttpRequest req = TestHttpRequest.REQ();
-    assertThat(classifier.classify(req)).isEmpty();
+    assertThat(classifier.classify(req, null)).isEmpty();
     Map<String, String> smallHeaders = Maps.newHashMap();
     smallHeaders.put(HttpHeaders.HOST, "example.com");
     smallHeaders.put(HttpHeaders.CONNECTION, "close");
     HttpRequest reqSmallHeaders =
         new TestHttpRequest.Builder().setHeaders(new CaseInsensitiveStringKV(smallHeaders)).build();
-    assertThat(classifier.classify(reqSmallHeaders)).isEqualTo(Label.SUSPICIOUS_HEADERS);
+    assertThat(classifier.classify(reqSmallHeaders, null)).isEqualTo(Label.SUSPICIOUS_HEADERS);
   }
 }

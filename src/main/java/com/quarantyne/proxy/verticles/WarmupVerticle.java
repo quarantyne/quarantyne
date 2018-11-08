@@ -1,6 +1,6 @@
 package com.quarantyne.proxy.verticles;
 
-import com.quarantyne.proxy.ServerConfig;
+import com.quarantyne.proxy.ProxyConfig;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.CompositeFuture;
 import io.vertx.core.Future;
@@ -11,18 +11,18 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public final class WarmupVerticle extends AbstractVerticle {
 
-  private final ServerConfig serverConfig;
+  private final ProxyConfig proxyConfig;
   private HttpClient httpClient;
 
-  public WarmupVerticle(ServerConfig serverConfig) {
-    this.serverConfig = serverConfig;
+  public WarmupVerticle(ProxyConfig proxyConfig) {
+    this.proxyConfig = proxyConfig;
   }
 
   @Override
   public void start(Future<Void> startFuture) {
     this.httpClient = vertx.createHttpClient();
-    Future<Void> warmupFront = warmup(serverConfig.getProxyHost(), serverConfig.getProxyPort());
-    Future<Void> warmupBack = warmup(serverConfig.getRemoteHost(), serverConfig.getRemotePort());
+    Future<Void> warmupFront = warmup(proxyConfig.getProxyHost(), proxyConfig.getProxyPort());
+    Future<Void> warmupBack = warmup(proxyConfig.getRemoteHost(), proxyConfig.getRemotePort());
     CompositeFuture.join(warmupFront, warmupBack).setHandler(h -> {
       if (h.succeeded()) {
         startFuture.complete();

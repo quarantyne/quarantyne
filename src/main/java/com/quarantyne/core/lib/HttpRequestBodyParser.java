@@ -40,17 +40,22 @@ public final class HttpRequestBodyParser {
   }
 
   public static HttpRequestBody parse(byte[] body, String contentType) {
-    Map<String, Object> parsedBody;
     Charset charset = getCharset(contentType);
+    Map<String, Object> parsed = null;
+
     if (isJson(contentType)) {
-      parsedBody = parseAsJson(new String(body, charset));
+      parsed = parseAsJson(new String(body, charset));
     } else if (isUrlEncoded(contentType)) {
-      parsedBody = parseAsUrlEncoded(new String(body, charset));
-    } else {
-      parsedBody = null;
+      parsed = parseAsUrlEncoded(new String(body, charset));
     }
-    return new HttpRequestBody(body, contentType, parsedBody);
+
+    if (parsed != null) {
+      return new HttpRequestBody(body, contentType, parsed);
+    }
+
+    return null;
   }
+
   private static boolean isJson(String contentType) {
     return contentType.equals(HttpHeaderValue.CONTENT_TYPE_JSON);
   }
