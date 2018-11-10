@@ -10,4 +10,7 @@ public class HttpRequest {
   CaseInsensitiveStringKV headers;
   String remoteAddress;
   String path;
+  public String getId() {
+    return remoteAddress+":"+headers.getOrDefault("user-agent", "");
+  }
 }

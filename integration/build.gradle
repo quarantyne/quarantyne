@@ -18,11 +18,11 @@ dependencies {
     testCompile group: 'io.rest-assured', name: 'json-path', version: restAssuredVersion
     testCompile group: 'junit', name: 'junit', version: junitVersion
     testCompile group: 'io.vertx', name: 'vertx-core', version: vertxVersion
-
+    testCompile group: 'com.squareup.okhttp3', name:"okhttp", version: "3.11.0"
 }
 
 task startServer(type: SpawnProcessTask, dependsOn: ':build') {
-    command "java -jar ${rootDir}/build/libs/quarantyne.jar"
+    command "java -jar ${rootDir}/build/libs/quarantyne.jar --config-file quarantyne.json"
     ready '==> ready'
 }
 

@@ -13,7 +13,7 @@ public class SuspiciousRequestHeadersClassifier implements HttpRequestClassifier
 
   @Override
   public Set<Label> classify(HttpRequest httpRequest, @Nullable HttpRequestBody body) {
-    if (httpRequest.getHeaders().size() < 5) {
+    if (httpRequest.getHeaders().size() <= 5) {
       if (log.isDebugEnabled()) {
         log.debug("suspicious headers: {}", httpRequest.getHeaders());
       }

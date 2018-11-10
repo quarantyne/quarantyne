@@ -1,9 +1,6 @@
 package com.quarantyne.integration;
 
 import static io.restassured.RestAssured.given;
-import static io.restassured.RestAssured.patch;
-import static io.restassured.RestAssured.post;
-import static io.restassured.RestAssured.put;
 import static org.hamcrest.Matchers.equalTo;
 
 import io.vertx.core.json.JsonObject;
@@ -20,7 +17,7 @@ public class MethodsWithBodyTest {
   }
 
   @Test
-  public void testPost_json_noContentType() {
+  public void testPost_json() {
     String json = new JsonObject().put("hello", "world").toString();
     given().body(json)
         .post("/anything")

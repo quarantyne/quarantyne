@@ -1,12 +1,10 @@
 package com.quarantyne.core.lib;
 
-import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Charsets;
 import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
-import java.nio.charset.Charset;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 
@@ -15,38 +13,19 @@ import lombok.extern.slf4j.Slf4j;
 public final class HttpRequestBodyParser {
   private static String AMP_SEP = "&";
   private static String EQ_SEP = "=";
-  private static String SEMICOL = ";";
-  private static String CHARSET_LABEL = "charset";
-
-  private static String NO_CHARSET_FOUND_EX = "illegal charset detected, defaulting to ISO-8859-1";
   private static Gson gson = new Gson();
 
-  @VisibleForTesting
-  protected static Charset getCharset(String contentType) {
-    String[] tokens = contentType.split(SEMICOL);
-    if (tokens.length > 1) {
-      for(String token : tokens) {
-        String[] charsetParts = token.split(EQ_SEP);
-        if (charsetParts[0].toLowerCase().trim().equals(CHARSET_LABEL)) {
-          try {
-            return Charset.forName(charsetParts[1].trim().toUpperCase());
-          } catch (Exception ex) {
-            log.error(NO_CHARSET_FOUND_EX, ex);
-          }
-        }
-      }
-    }
-    return Charsets.ISO_8859_1;
-  }
-
   public static HttpRequestBody parse(byte[] body, String contentType) {
-    Charset charset = getCharset(contentType);
+    ContentType ct = ContentTypeParser.parse(contentType);
+    if (ct == null) {
+      return null;
+    }
     Map<String, Object> parsed = null;
 
-    if (isJson(contentType)) {
-      parsed = parseAsJson(new String(body, charset));
-    } else if (isUrlEncoded(contentType)) {
-      parsed = parseAsUrlEncoded(new String(body, charset));
+    if (isJson(ct)) {
+      parsed = parseAsJson(new String(body, ct.getCharset() != null ? ct.getCharset() : Charsets.UTF_8));
+    } else if (isUrlEncoded(ct)) {
+      parsed = parseAsUrlEncoded(new String(body, ct.getCharset() != null ? ct.getCharset() : Charsets.ISO_8859_1));
     }
 
     if (parsed != null) {
@@ -56,12 +35,12 @@ public final class HttpRequestBodyParser {
     return null;
   }
 
-  private static boolean isJson(String contentType) {
-    return contentType.equals(HttpHeaderValue.CONTENT_TYPE_JSON);
+  private static boolean isJson(ContentType contentType) {
+    return contentType.getContentType().equals(HttpHeaderValue.CONTENT_TYPE_JSON);
   }
 
-  private static boolean isUrlEncoded(String contentType) {
-    return contentType.equals(HttpHeaderValue.CONTENT_TYPE_URLENCODED);
+  private static boolean isUrlEncoded(ContentType contentType) {
+    return contentType.getContentType().equals(HttpHeaderValue.CONTENT_TYPE_URLENCODED);
   }
 
   private static Map<String, Object> parseAsJson(String body) {
@@ -72,6 +51,7 @@ public final class HttpRequestBodyParser {
       return null;
     }
   }
+
 
   private static Map<String, Object> parseAsUrlEncoded(String body) {
     String[] tokens = body.split(AMP_SEP);

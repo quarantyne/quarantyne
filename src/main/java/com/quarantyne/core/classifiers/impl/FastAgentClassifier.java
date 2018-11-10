@@ -27,13 +27,13 @@ public class FastAgentClassifier implements HttpRequestClassifier {
 
     this.penaltyBoxCache = Caffeine
         .newBuilder()
-        .expireAfterWrite(Duration.ofDays(1))
+        .expireAfterWrite(Duration.ofMinutes(20))
         .build();
   }
 
   @Override
   public Set<Label> classify(final HttpRequest httpRequest, @Nullable final HttpRequestBody body) {
-    HashCode id = Fingerprinter.fromString(httpRequest.getRemoteAddress());
+    HashCode id = Fingerprinter.fromString(httpRequest.getId());
     ExponentialBackOff backoff = penaltyBoxCache.getIfPresent(id);
     if (backoff != null) {
       if (backoff.isBackedOff()) {
