@@ -58,4 +58,19 @@ public final class ProxyConfig {
   public String getConfigFile() {
     return configFile;
   }
+
+  @Override
+  public String toString() {
+    final StringBuffer sb = new StringBuffer("ProxyConfig{");
+    sb.append("proxyPort=").append(proxyPort);
+    sb.append(", proxyHost='").append(proxyHost).append('\'');
+    sb.append(", remotePort=").append(remotePort);
+    sb.append(", remoteHost='").append(remoteHost).append('\'');
+    sb.append(", isSsl=").append(isSsl);
+    sb.append(", adminPort=").append(adminPort);
+    sb.append(", configUrl='").append(configUrl).append('\'');
+    sb.append(", configFile='").append(configFile).append('\'');
+    sb.append('}');
+    return sb.toString();
+  }
 }

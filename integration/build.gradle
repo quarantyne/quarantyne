@@ -22,7 +22,7 @@ dependencies {
 }
 
 task startServer(type: SpawnProcessTask, dependsOn: ':build') {
-    command "java -jar ${rootDir}/build/libs/quarantyne.jar --config-file quarantyne.json"
+    command "java -jar ${rootDir}/build/libs/quarantyne.jar --config-file ${projectDir}/quarantyne.json"
     ready '==> ready'
 }
 

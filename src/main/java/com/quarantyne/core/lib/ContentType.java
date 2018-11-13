@@ -1,7 +1,6 @@
 package com.quarantyne.core.lib;
 
 import java.nio.charset.Charset;
-import javax.annotation.Nullable;
 import lombok.Value;
 
 @Value

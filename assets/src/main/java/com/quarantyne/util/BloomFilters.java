@@ -1,4 +1,4 @@
-package com.quarantyne.core.bloom;
+package com.quarantyne.util;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Preconditions;
@@ -26,9 +26,6 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 public class BloomFilters {
-  public static final String PASSWORDS_BF_RESOURCE = "passwords.bf";
-  public static final String MX_DOMAINS_BF_RESOURCE = "mxdomains.bf";
-
   private static Funnel<CharSequence> FUNNEL = Funnels.stringFunnel(Charsets.UTF_8);
 
   /**
@@ -62,7 +59,7 @@ public class BloomFilters {
     Preconditions.checkState(fpp > 0 && fpp < 1, "0 < fpp < 1 ");
 
     long start = System.currentTimeMillis();
-    log.info("creating bloom filter for {}", sourcePath);
+    log.debug("creating bloom filter for {}", sourcePath);
     BloomFilter<String> bloomFilter = BloomFilter.create(
         FUNNEL,
         size,
@@ -80,9 +77,9 @@ public class BloomFilters {
       t.shutdown();
     }
 
-    log.info("created bloom filter in {} secs", (System.currentTimeMillis() - start) / 1000);
-    log.info("approximate element count {}", bloomFilter.approximateElementCount());
-    log.info("expected false positive probability {}", bloomFilter.expectedFpp());
+    log.debug("created bloom filter in {} secs", (System.currentTimeMillis() - start) / 1000);
+    log.debug("approximate element count {}", bloomFilter.approximateElementCount());
+    log.debug("expected false positive probability {}", bloomFilter.expectedFpp());
 
     start = System.currentTimeMillis();
     log.debug("starting serialization of bloom filter {} ...", sourcePath);
@@ -94,7 +91,7 @@ public class BloomFilters {
       log.error(sourcePath.toString(), ioex);
     }
 
-    log.info("serialized bloom filter in {} ms", (System.currentTimeMillis() - start) );
+    log.debug("serialized bloom filter in {} ms", (System.currentTimeMillis() - start) );
   }
 
   /**

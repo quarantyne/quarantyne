@@ -4,7 +4,6 @@ import com.beust.jcommander.JCommander;
 import com.google.common.collect.Lists;
 import com.google.common.hash.BloomFilter;
 import com.quarantyne.config.ConfigReader;
-import com.quarantyne.core.bloom.BloomFilters;
 import com.quarantyne.core.classifiers.CompositeClassifier;
 import com.quarantyne.core.classifiers.HttpRequestClassifier;
 import com.quarantyne.core.classifiers.impl.CompromisedPasswordClassifier;
@@ -15,6 +14,7 @@ import com.quarantyne.core.classifiers.impl.IpRotationClassifier;
 import com.quarantyne.core.classifiers.impl.LargeBodySizeClassifier;
 import com.quarantyne.core.classifiers.impl.SuspiciousRequestHeadersClassifier;
 import com.quarantyne.core.classifiers.impl.SuspiciousUserAgentClassifier;
+import com.quarantyne.core.util.BloomFilters;
 import com.quarantyne.geoip4j.GeoIp4j;
 import com.quarantyne.geoip4j.GeoIp4jImpl;
 import com.quarantyne.proxy.verticles.AdminVerticle;
@@ -41,16 +41,14 @@ public class Main {
     InternalLoggerFactory.setDefaultFactory(Slf4JLoggerFactory.INSTANCE);
 
     ProxyConfig proxyConfig = new ProxyConfig();
-    JCommander jCommander = JCommander.newBuilder()
+    JCommander.newBuilder()
         .addObject(proxyConfig)
-        .build();
-
-    // jCommander.usage();
-    jCommander.parse(args);
+        .build()
+        .parse(args);
 
     try {
-      weakOrBreachedPwBf = BloomFilters.deserialize(BloomFilters.PASSWORDS_BF_RESOURCE);
-      disposableMxBf = BloomFilters.deserialize(BloomFilters.MX_DOMAINS_BF_RESOURCE);
+      weakOrBreachedPwBf = BloomFilters.deserialize("com/quarantyne/assets/compromised_passwords.dat");
+      disposableMxBf = BloomFilters.deserialize("com/quarantyne/assets/disposable_email.dat");
     } catch (IOException ioex) {
       log.error("error during bf deserialization", ioex);
       System.exit(-1);
@@ -99,7 +97,7 @@ public class Main {
     vertx.deployVerticle(new AdminVerticle(proxyConfig));
 
     vertx.deployVerticle(() -> new ProxyVerticle(proxyConfig, quarantyneRequestClassifier, configReader),
-        new DeploymentOptions().setInstances(numCpus * 2));
+        new DeploymentOptions().setInstances(numCpus * 2 + 1));
 
     vertx.deployVerticle(() -> new WarmupVerticle(proxyConfig),
         new DeploymentOptions(),

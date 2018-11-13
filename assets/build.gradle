@@ -1,0 +1,30 @@
+plugins {
+    id 'application'
+}
+
+group 'com.quarantyne'
+version '1.0.0'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+mainClassName = "com.quarantyne.Assets"
+
+
+dependencies {
+    implementation group: 'org.projectlombok', name: 'lombok', version: lombokVersion
+    annotationProcessor group: 'org.projectlombok', name: 'lombok', version: lombokVersion
+    implementation group: 'com.google.guava', name: 'guava', version: guavaVersion
+    implementation group: 'com.squareup.okhttp3', name:"okhttp", version: "3.11.0"
+    implementation group: 'org.slf4j', name: 'slf4j-api', version: slf4jVersion
+    implementation group: 'org.slf4j', name: 'slf4j-simple', version: slf4jVersion
+    implementation group: 'com.google.code.gson', name: 'gson', version: gsonVersion
+    implementation group: 'dnsjava', name: 'dnsjava', version: '2.1.8'
+}
+
+jar {
+    exclude "**/*.class"
+}

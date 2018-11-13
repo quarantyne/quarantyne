@@ -66,15 +66,10 @@ dependencies {
     testImplementation group: 'net.bytebuddy', name: 'byte-buddy', version: '1.9.1'
 
     implementation 'com.github.quarantyne:geoip4j:1.0.5'
+
+    implementation project('assets')
 }
 
 shadowJar {
     classifier = null
-}
-
-
-// scripts
-task genBloomFilters(type: JavaExec) {
-    classpath = sourceSets.main.runtimeClasspath
-    main = "com.quarantyne.core.bloomfilters.GenBloomFilters"
 }
