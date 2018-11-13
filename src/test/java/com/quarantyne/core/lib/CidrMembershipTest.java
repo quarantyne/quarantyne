@@ -22,5 +22,7 @@ public class CidrMembershipTest {
     assertThat(cidrMembership.get("50.2.63.255")).contains("test");
 
     assertThat(cidrMembership.get("50.2.64.0")).isEmpty();
+
+    assertThat(cidrMembership.get(null)).isEmpty();
   }
 }

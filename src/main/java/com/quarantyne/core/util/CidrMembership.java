@@ -88,10 +88,12 @@ public class CidrMembership<T> {
     String key = ip.split("\\.")[0];
     List<CidrBlock<T>> shard = map.get(key);
     Optional<T> result = Optional.empty();
-    for (CidrBlock<T> record: shard) {
-      if (record.includes(ipToLong(ip))) {
-        result = Optional.of(record.getValue());
-        break;
+    if (shard != null) {
+      for (CidrBlock<T> record: shard) {
+        if (record.includes(ipToLong(ip))) {
+          result = Optional.of(record.getValue());
+          break;
+        }
       }
     }
     return result;
