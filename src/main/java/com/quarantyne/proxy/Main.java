@@ -12,9 +12,11 @@ import com.quarantyne.core.classifiers.impl.FastAgentClassifier;
 import com.quarantyne.core.classifiers.impl.GeoDiscrepancyClassifier;
 import com.quarantyne.core.classifiers.impl.IpRotationClassifier;
 import com.quarantyne.core.classifiers.impl.LargeBodySizeClassifier;
+import com.quarantyne.core.classifiers.impl.PublicCloudExecutionClassifier;
 import com.quarantyne.core.classifiers.impl.SuspiciousRequestHeadersClassifier;
 import com.quarantyne.core.classifiers.impl.SuspiciousUserAgentClassifier;
 import com.quarantyne.core.util.BloomFilters;
+import com.quarantyne.core.util.CidrMembership;
 import com.quarantyne.geoip4j.GeoIp4j;
 import com.quarantyne.geoip4j.GeoIp4jImpl;
 import com.quarantyne.proxy.verticles.AdminVerticle;
@@ -36,6 +38,8 @@ public class Main {
 
   private static BloomFilter<String> weakOrBreachedPwBf = null;
   private static BloomFilter<String> disposableMxBf = null;
+  private static CidrMembership<String> awsIpMembership = null;
+  private static CidrMembership<String> gcpIpMembership = null;
 
   public static void main(String...args) {
     InternalLoggerFactory.setDefaultFactory(Slf4JLoggerFactory.INSTANCE);
@@ -46,11 +50,14 @@ public class Main {
         .build()
         .parse(args);
 
+    // load assets or die
     try {
       weakOrBreachedPwBf = BloomFilters.deserialize("com/quarantyne/assets/compromised_passwords.dat");
       disposableMxBf = BloomFilters.deserialize("com/quarantyne/assets/disposable_email.dat");
+      awsIpMembership = new CidrMembership<>("com/quarantyne/assets/aws_ip_ranges.dat", "aws");
+      gcpIpMembership = new CidrMembership<>("com/quarantyne/assets/gcp_ip_ranges.dat", "gcp");
     } catch (IOException ioex) {
-      log.error("error during bf deserialization", ioex);
+      log.error("error while reading asset", ioex);
       System.exit(-1);
     }
 
@@ -88,7 +95,8 @@ public class Main {
         new LargeBodySizeClassifier(),
         new CompromisedPasswordClassifier(weakOrBreachedPwBf, configReader),
         new DisposableEmailClassifier(disposableMxBf, configReader),
-        new GeoDiscrepancyClassifier(geoIp4j, configReader)
+        new GeoDiscrepancyClassifier(geoIp4j, configReader),
+        new PublicCloudExecutionClassifier(awsIpMembership, gcpIpMembership)
         // new SuspiciousLoginActivityClassifier(geoIp4j)
     );
 

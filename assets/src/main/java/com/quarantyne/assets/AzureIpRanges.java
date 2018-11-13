@@ -15,7 +15,7 @@ public class AzureIpRanges extends Asset {
   private OkHttpClient okHttpClient;
   private Gson gson;
 
-  private static String URL = "https://download.microsoft.com/download/7/1/D/71D86715-5596-4529-9B13-DA13A5DE5B63/ServiceTags_Public_20181107.json";
+  private static String URL = "https://download.microsoft.com/download/7/1/D/71D86715-5596-4529-9B13-DA13A5DE5B63/ServiceTags_Public_20181112.json";
   private static Request REQ = new Request.Builder().url(URL).build();
 
   public AzureIpRanges(OkHttpClient okHttpClient, Gson gson) {

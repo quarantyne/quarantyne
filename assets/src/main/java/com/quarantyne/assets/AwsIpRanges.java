@@ -2,13 +2,9 @@ package com.quarantyne.assets;
 
 
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import java.io.BufferedOutputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.stream.Collectors;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;

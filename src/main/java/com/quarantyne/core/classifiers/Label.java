@@ -24,7 +24,8 @@ public class Label {
   public static Set<Label> IP_ROTATION = Sets.newHashSet(new Label("IPR"));
   public static Set<Label> SUSPICIOUS_HEADERS = Sets.newHashSet(new Label("SHR"));
   public static Set<Label> SUSPICIOUS_UA = Sets.newHashSet(new Label("SUA"));
-  public static Set<Label> PUBLIC_CLOUD_EXECUTION = Sets.newHashSet(new Label("PCX"));
+  public static Set<Label> PUBLIC_CLOUD_EXECUTION_AWS = Sets.newHashSet(new Label("PCX/AWS"));
+  public static Set<Label> PUBLIC_CLOUD_EXECUTION_GCP = Sets.newHashSet(new Label("PCX/GCP"));
   public static Set<Label> IP_COUNTRY_DISCREPANCY = Sets.newHashSet(new Label("IPD"));
   public static Set<Label> SUSPICIOUS_GEO = Sets.newHashSet(new Label("SGE"));
 
