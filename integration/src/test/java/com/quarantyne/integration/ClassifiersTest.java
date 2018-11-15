@@ -10,6 +10,7 @@ import java.io.IOException;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class ClassifiersTest {
@@ -116,6 +117,7 @@ public class ClassifiersTest {
   }
 
   @Test
+  @Ignore
   public void testFastAgent() throws IOException {
     Request req = new Request.Builder().header("user-agent", USER_AGENT).url("http://localhost:8080").build();
     httpClient.newCall(req).execute();
