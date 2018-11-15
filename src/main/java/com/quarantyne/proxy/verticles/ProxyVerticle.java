@@ -140,8 +140,8 @@ public final class ProxyVerticle extends AbstractVerticle {
     MultiMap quarantyneHeaders = MultiMap.caseInsensitiveMultiMap();
     if (!quarantyneLabels.isEmpty()) {
       quarantyneHeaders.add(QuarantyneHeaders.LABELS, joiner.join(quarantyneLabels));
-      quarantyneHeaders.add(QuarantyneHeaders.TRACE_ID, UUID.randomUUID().toString());
     }
+    quarantyneHeaders.add(QuarantyneHeaders.TRACE_ID, UUID.randomUUID().toString());
     return quarantyneHeaders;
   }
 

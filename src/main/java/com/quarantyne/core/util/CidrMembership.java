@@ -1,6 +1,9 @@
 package com.quarantyne.core.util;
 
+import com.google.common.io.Resources;
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -55,12 +58,17 @@ public class CidrMembership<T> {
     }
   }
 
-  public CidrMembership(String resourcePath, T value)  {
+  public CidrMembership(String resource, T value) {
     this.map = new HashMap<>();
     this.value = value;
-    Reader file =
-        new InputStreamReader(this.getClass().getResourceAsStream(""));
-
+    Reader file;
+    try {
+      file = new InputStreamReader(
+          new ByteArrayInputStream(
+              Resources.toByteArray(Resources.getResource(resource))));
+    } catch (IOException ex) {
+        throw new IllegalArgumentException("cannot find resource " + resource);
+    }
     try (BufferedReader reader = new BufferedReader(file)) {
       List<CidrBlock<T>> geoIpRangeRecordList;
       CidrBlock<T> cidrBlock;
