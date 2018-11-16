@@ -1,16 +1,15 @@
 package com.quarantyne.config;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import com.google.common.collect.Sets;
 import io.vertx.config.ConfigRetrieverOptions;
 import io.vertx.config.ConfigStoreOptions;
 import io.vertx.core.json.JsonObject;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
 import org.junit.Assert;
 import org.junit.Test;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 public class ConfigRetrieverOptionsSupplierTest {
   @Test

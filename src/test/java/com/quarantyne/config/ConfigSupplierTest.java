@@ -1,7 +1,6 @@
 package com.quarantyne.config;
 
 import com.google.common.io.Resources;
-import com.quarantyne.proxy.ProxyConfig;
 import io.vertx.ext.unit.junit.RunTestOnContext;
 import io.vertx.ext.unit.junit.VertxUnitRunner;
 import java.net.URL;
@@ -18,7 +17,7 @@ public class ConfigSupplierTest {
 
   @Test
   public void testParseConfig() {
-    ProxyConfig proxyConfig = new ProxyConfig();
+    ConfigArgs configArgs = new ConfigArgs();
 
   }
 

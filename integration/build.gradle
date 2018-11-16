@@ -22,7 +22,9 @@ dependencies {
 }
 
 task startServer(type: SpawnProcessTask, dependsOn: ':build') {
-    command "java -jar ${rootDir}/build/libs/quarantyne.jar --config-file ${projectDir}/quarantyne.json"
+    def remoteConfig = "https://s3-us-west-2.amazonaws.com/releases.quarantyne.com/quarantyne.json"
+    def localConfig = "${projectDir}/quarantyne.json"
+    command "java -jar ${rootDir}/build/libs/quarantyne.jar --config-file $remoteConfig"
     ready '==> ready'
 }
 

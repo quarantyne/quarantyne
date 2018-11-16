@@ -57,6 +57,7 @@ dependencies {
     implementation group: 'io.vertx', name: 'vertx-config', version: vertxVersion
     implementation group: 'io.vertx', name: 'vertx-dropwizard-metrics', version: vertxVersion
     implementation group: 'com.beust', name: 'jcommander', version: jcommanderVersion
+    implementation group: 'commons-validator', name: 'commons-validator', version: commonsValidatorVersion
 
     testImplementation group: 'io.vertx', name: 'vertx-unit', version: vertxVersion
     testImplementation group: 'junit', name: 'junit', version: junitVersion

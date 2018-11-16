@@ -1,11 +1,11 @@
 package com.quarantyne.lib;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import com.google.common.collect.Lists;
 import com.quarantyne.util.CidrMembership;
 import java.util.List;
 import org.junit.Test;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 public class CidrMembershipTest {
   @Test

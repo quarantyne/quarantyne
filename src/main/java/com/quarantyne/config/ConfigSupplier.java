@@ -45,17 +45,15 @@ public class ConfigSupplier implements Supplier<Config> {
   private static String BLOCKED_CLASSES = "blocked_classes";
   private static String IS_DISABLED = "is_disabled";
 
-  private AtomicReference<Config> ref = new AtomicReference<>();
+  private AtomicReference<Config> ref = new AtomicReference<>(new Config());
 
   // use defaults
   public ConfigSupplier() {
     log.info("using default configuration");
-    this.ref.set(new Config());
   }
 
 
-  public ConfigSupplier(Vertx vertx, ConfigRetrieverOptionsSupplier configRetrieverOptionsSupplier) {
-    this.ref.set(new Config());
+  public ConfigSupplier(Vertx vertx, Supplier<ConfigRetrieverOptions> configRetrieverOptionsSupplier) {
     ConfigRetrieverOptions configRetrieverOptions = configRetrieverOptionsSupplier.get();
     configRetriever = ConfigRetriever.create(vertx, configRetrieverOptions);
 
@@ -78,7 +76,7 @@ public class ConfigSupplier implements Supplier<Config> {
                   }
                 });
         } else {
-          log.error("failed to load configuration", h.cause());
+          log.error("failed to load configuration ", h.cause());
         }
       });
 

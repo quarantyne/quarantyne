@@ -8,6 +8,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.time.Duration;
 import java.util.Optional;
 import java.util.function.Supplier;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +23,7 @@ public class ConfigRetrieverOptionsSupplier implements Supplier<ConfigRetrieverO
       throw new IllegalArgumentException("Config location require but null/empty found");
     }
     this.configRetrieverOptions = new ConfigRetrieverOptions();
+    configRetrieverOptions.setScanPeriod(Duration.ofMinutes(5).toMillis());
     configRetrieverOptions.addStore(
         fromUrl(configLocation).orElseGet(() -> fromFile(configLocation)));
   }
@@ -44,19 +46,21 @@ public class ConfigRetrieverOptionsSupplier implements Supplier<ConfigRetrieverO
     if (isUrl(configLocation)) {
       try {
         URL url = new URL(configLocation);
+        JsonObject config = new JsonObject()
+            .put("ssl", configLocation.startsWith("https"))
+            .put("keepAlive", false)
+            .put("host", url.getHost())
+            .put("port", getPort(url.getPort(), url.getProtocol()))
+            .put("path", url.getPath());
         ConfigStoreOptions configStoreOptions =
             new ConfigStoreOptions()
                 .setType("http")
-                .setConfig(
-                    new JsonObject()
-                        .put("host", url.getHost())
-                        .put("port", getPort(url.getPort(), url.getProtocol()))
-                        .put("path", url.getPath()));
+                .setConfig(config);
         log.info("remote configuration file found at {}", configLocation);
 
         return Optional.of(configStoreOptions);
       } catch (MalformedURLException ex) {
-        throw new IllegalArgumentException(configLocation + "is not a valid url, skipping...");
+        throw new IllegalArgumentException(configLocation + " is not a valid url, skipping...");
       }
     } else {
       return Optional.empty();

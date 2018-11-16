@@ -1,9 +1,9 @@
 package com.quarantyne.lib;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import com.google.common.base.Charsets;
 import org.junit.Test;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 public class ContentTypeParserTest {
   @Test

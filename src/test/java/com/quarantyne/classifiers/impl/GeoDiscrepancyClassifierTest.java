@@ -5,10 +5,10 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import com.quarantyne.config.Config;
 import com.quarantyne.classifiers.Label;
 import com.quarantyne.classifiers.TestHttpRequest;
 import com.quarantyne.classifiers.TestHttpRequestBody;
+import com.quarantyne.config.Config;
 import com.quarantyne.geoip4j.GeoIp4j;
 import com.quarantyne.geoip4j.GeoName;
 import io.vertx.core.json.JsonObject;

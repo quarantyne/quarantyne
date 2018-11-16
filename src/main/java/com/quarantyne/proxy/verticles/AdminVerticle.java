@@ -1,6 +1,6 @@
 package com.quarantyne.proxy.verticles;
 
-import com.quarantyne.proxy.ProxyConfig;
+import com.quarantyne.config.IpPort;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.http.HttpHeaders;
 import io.vertx.core.http.HttpServer;
@@ -16,14 +16,14 @@ public class AdminVerticle extends AbstractVerticle {
   private static final String METRICS_PATH = "/metrics";
   private static final String CONTENT_JSON = "application/json; charset=utf-8";
 
-  private final ProxyConfig proxyConfig;
+  private final IpPort ipPort;
   private MetricsService metricsService;
 
   private static final String METRICS_HTTP_PROXY_FQDN = "vertx.http.clients";
   private static final String METRICS_HTTP_REMOTE_FQDN = "vertx.http.servers";
 
-  public AdminVerticle(ProxyConfig proxyConfig) {
-    this.proxyConfig = proxyConfig;
+  public AdminVerticle(IpPort ipPort) {
+    this.ipPort = ipPort;
   }
 
   public void start() {
@@ -39,7 +39,8 @@ public class AdminVerticle extends AbstractVerticle {
         req.response().setStatusCode(404).end("HTTP 404");
       }
     });
-    httpServer.listen(proxyConfig.getAdminPort(), h -> {
+    // we don't start this verticle unless this was defined
+    httpServer.listen(ipPort.getPort(), ipPort.getIp(), h -> {
       if (h.failed()) {
         log.info("failed to start admin service", h.cause());
       }

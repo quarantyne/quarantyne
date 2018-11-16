@@ -1,4 +1,4 @@
-package com.quarantyne.proxy;
+package com.quarantyne.lib;
 
 public final class QuarantyneHeaders {
   private static final String PREFIX = "X-Quarantyne-";

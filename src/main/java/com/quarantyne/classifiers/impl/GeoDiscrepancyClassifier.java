@@ -1,13 +1,13 @@
 package com.quarantyne.classifiers.impl;
 
 import com.google.common.base.Strings;
-import com.quarantyne.config.Config;
 import com.quarantyne.classifiers.HttpRequestClassifier;
 import com.quarantyne.classifiers.Label;
-import com.quarantyne.lib.HttpRequest;
-import com.quarantyne.lib.HttpRequestBody;
+import com.quarantyne.config.Config;
 import com.quarantyne.geoip4j.GeoIp4j;
 import com.quarantyne.geoip4j.GeoName;
+import com.quarantyne.lib.HttpRequest;
+import com.quarantyne.lib.HttpRequestBody;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Supplier;

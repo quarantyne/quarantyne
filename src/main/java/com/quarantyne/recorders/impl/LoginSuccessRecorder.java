@@ -1,14 +1,14 @@
 package com.quarantyne.recorders.impl;
 
 import com.quarantyne.config.Config;
+import com.quarantyne.geoip4j.GeoIp4j;
+import com.quarantyne.geoip4j.GeoName;
 import com.quarantyne.lib.HttpRequest;
 import com.quarantyne.lib.HttpRequestBody;
 import com.quarantyne.lib.HttpResponse;
-import com.quarantyne.recorders.HttpResponseRecorder;
-import com.quarantyne.geoip4j.GeoIp4j;
-import com.quarantyne.geoip4j.GeoName;
 import com.quarantyne.login_history.LoginEvent;
 import com.quarantyne.login_history.LoginHistoryStore;
+import com.quarantyne.recorders.HttpResponseRecorder;
 import java.time.Instant;
 import java.util.function.Supplier;
 
