@@ -3,20 +3,20 @@ package com.quarantyne.proxy;
 import com.beust.jcommander.JCommander;
 import com.google.common.collect.Lists;
 import com.google.common.hash.BloomFilter;
-import com.quarantyne.config.ConfigReader;
-import com.quarantyne.core.classifiers.CompositeClassifier;
-import com.quarantyne.core.classifiers.HttpRequestClassifier;
-import com.quarantyne.core.classifiers.impl.CompromisedPasswordClassifier;
-import com.quarantyne.core.classifiers.impl.DisposableEmailClassifier;
-import com.quarantyne.core.classifiers.impl.FastAgentClassifier;
-import com.quarantyne.core.classifiers.impl.GeoDiscrepancyClassifier;
-import com.quarantyne.core.classifiers.impl.IpRotationClassifier;
-import com.quarantyne.core.classifiers.impl.LargeBodySizeClassifier;
-import com.quarantyne.core.classifiers.impl.PublicCloudExecutionClassifier;
-import com.quarantyne.core.classifiers.impl.SuspiciousRequestHeadersClassifier;
-import com.quarantyne.core.classifiers.impl.SuspiciousUserAgentClassifier;
-import com.quarantyne.core.util.BloomFilters;
-import com.quarantyne.core.util.CidrMembership;
+import com.quarantyne.config.ConfigSupplier;
+import com.quarantyne.classifiers.CompositeClassifier;
+import com.quarantyne.classifiers.HttpRequestClassifier;
+import com.quarantyne.classifiers.impl.CompromisedPasswordClassifier;
+import com.quarantyne.classifiers.impl.DisposableEmailClassifier;
+import com.quarantyne.classifiers.impl.FastAgentClassifier;
+import com.quarantyne.classifiers.impl.GeoDiscrepancyClassifier;
+import com.quarantyne.classifiers.impl.IpRotationClassifier;
+import com.quarantyne.classifiers.impl.LargeBodySizeClassifier;
+import com.quarantyne.classifiers.impl.PublicCloudExecutionClassifier;
+import com.quarantyne.classifiers.impl.SuspiciousRequestHeadersClassifier;
+import com.quarantyne.classifiers.impl.SuspiciousUserAgentClassifier;
+import com.quarantyne.util.BloomFilters;
+import com.quarantyne.util.CidrMembership;
 import com.quarantyne.geoip4j.GeoIp4j;
 import com.quarantyne.geoip4j.GeoIp4jImpl;
 import com.quarantyne.proxy.verticles.AdminVerticle;
@@ -80,9 +80,9 @@ public class Main {
     log.debug("==> detected {} cpus core", numCpus);
     Vertx vertx = Vertx.vertx(vertxOptions);
 
-    ConfigReader configReader = new ConfigReader(vertx, proxyConfig);
+    ConfigSupplier configSupplier = new ConfigSupplier();
     // require a config to start
-    if (configReader.get() == null) {
+    if (configSupplier.get() == null) {
       log.info("No quarantyne configuration was specified, using default settings");
     }
 
@@ -93,9 +93,9 @@ public class Main {
         new SuspiciousRequestHeadersClassifier(),
         new SuspiciousUserAgentClassifier(),
         new LargeBodySizeClassifier(),
-        new CompromisedPasswordClassifier(weakOrBreachedPwBf, configReader),
-        new DisposableEmailClassifier(disposableMxBf, configReader),
-        new GeoDiscrepancyClassifier(geoIp4j, configReader),
+        new CompromisedPasswordClassifier(weakOrBreachedPwBf, configSupplier),
+        new DisposableEmailClassifier(disposableMxBf, configSupplier),
+        new GeoDiscrepancyClassifier(geoIp4j, configSupplier),
         new PublicCloudExecutionClassifier(awsIpMembership, gcpIpMembership)
         // new SuspiciousLoginActivityClassifier(geoIp4j)
     );
@@ -104,7 +104,8 @@ public class Main {
 
     vertx.deployVerticle(new AdminVerticle(proxyConfig));
 
-    vertx.deployVerticle(() -> new ProxyVerticle(proxyConfig, quarantyneRequestClassifier, configReader),
+    vertx.deployVerticle(() -> new ProxyVerticle(proxyConfig, quarantyneRequestClassifier,
+            configSupplier),
         new DeploymentOptions().setInstances(numCpus * 2 + 1));
 
     vertx.deployVerticle(() -> new WarmupVerticle(proxyConfig),
