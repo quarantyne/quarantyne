@@ -17,25 +17,25 @@ public class FingerprinterTest {
   @Test
   public void testHeaderFingerprintingEquality() {
     Map<String, String> headers = Maps.newHashMap();
-    headers.put("cookie", "a=b");
     headers.put("user-agent", "hello firefox");
+    headers.put("accept", "text/html");
     CaseInsensitiveStringKV qHeaders = new CaseInsensitiveStringKV(headers);
     assertThat(Fingerprinter.fromHeaders(qHeaders)).isEqualTo(Fingerprinter.fromHeaders(qHeaders));
 
     Map<String, String> headersDifferentOrder = Maps.newHashMap();
     headersDifferentOrder.put("user-agent", "hello firefox");
-    headersDifferentOrder.put("cookie", "a=b");
+    headersDifferentOrder.put("accept", "text/html");
     CaseInsensitiveStringKV qHeadersDifferentOrder = new CaseInsensitiveStringKV(headersDifferentOrder);
     assertThat(Fingerprinter.fromHeaders(qHeadersDifferentOrder)).isEqualTo(Fingerprinter.fromHeaders(qHeadersDifferentOrder));
 
     Map<String, String> headersDifferentCase = Maps.newHashMap();
-    headersDifferentCase.put("Cookie", "a=b");
+    headersDifferentCase.put("accept", "text/html");
     headersDifferentCase.put("User-Agent", "hello firefox");
     CaseInsensitiveStringKV qheadersDifferentCase = new CaseInsensitiveStringKV(headersDifferentCase);
     assertThat(Fingerprinter.fromHeaders(qheadersDifferentCase)).isEqualTo(Fingerprinter.fromHeaders(qheadersDifferentCase));
 
     Map<String, String> headersDifferentValue = Maps.newHashMap();
-    headersDifferentValue.put("Cookie", "a=c");
+    headersDifferentValue.put("accept", "application/json");
     headersDifferentValue.put("User-Agent", "hello firefox");
     CaseInsensitiveStringKV qheadersDifferentValue = new CaseInsensitiveStringKV(headersDifferentValue);
     assertThat(Fingerprinter.fromHeaders(qHeaders)).isNotEqualTo(Fingerprinter.fromHeaders(qheadersDifferentValue));

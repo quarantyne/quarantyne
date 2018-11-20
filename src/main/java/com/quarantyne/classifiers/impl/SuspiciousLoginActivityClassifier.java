@@ -41,12 +41,12 @@ public class SuspiciousLoginActivityClassifier implements HttpRequestClassifier 
     String loginIdentifier = body.get( config.get().getLoginAction().getIdentifierParam());
     if (Strings.isNullOrEmpty(loginIdentifier)) {
       String thisLoginCountry = geoIp4j
-          .getGeoName(httpRequest.getRemoteAddress())
+          .getGeoName(httpRequest.getRemoteIpAddresses().getOrigin())
           .map(GeoName::getIsoCode)
           .orElse(null);
       LoginEvent loginEvent = new LoginEvent(
           Instant.now(),
-          httpRequest.getRemoteAddress(),
+          httpRequest.getRemoteIpAddresses().getOrigin(),
           thisLoginCountry
       );
       // TODO switch to last two countries
@@ -82,8 +82,8 @@ public class SuspiciousLoginActivityClassifier implements HttpRequestClassifier 
       loginHistoryStore.registerLogin(loginIdentifier,
           new LoginEvent(
               Instant.now(),
-              httpRequest.getRemoteAddress(),
-              getIsoCode(geoIp4j.getGeoName(httpRequest.getRemoteAddress()))));
+              null,//httpRequest.getRemoteAddress(),
+              getIsoCode(geoIp4j.getGeoName(httpRequest.getRemoteIpAddresses().getOrigin()))));
     }
   }
 

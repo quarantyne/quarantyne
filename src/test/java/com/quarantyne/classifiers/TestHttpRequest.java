@@ -4,6 +4,7 @@ import com.google.common.collect.Maps;
 import com.google.common.net.HttpHeaders;
 import com.quarantyne.lib.HttpRequest;
 import com.quarantyne.lib.HttpRequestMethod;
+import com.quarantyne.lib.RemoteIpAddresses;
 import com.quarantyne.util.CaseInsensitiveStringKV;
 import java.util.Map;
 
@@ -52,7 +53,7 @@ public class TestHttpRequest {
       return this;
     }
     public HttpRequest build() {
-      return new HttpRequest(method, headers, remoteAddress, path);
+      return new HttpRequest(method, headers, new RemoteIpAddresses(remoteAddress), path);
     }
 
   }

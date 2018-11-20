@@ -31,8 +31,8 @@ public class LoginSuccessRecorder implements HttpResponseRecorder {
 
     loginHistoryStore.registerLogin(identifier, new LoginEvent(
         Instant.now(),
-        request.getRemoteAddress(),
-        geoIp4j.getGeoName(request.getRemoteAddress()).map(GeoName::getIsoCode).orElse(null))
+        null, //request.getRemoteAddress(),
+        geoIp4j.getGeoName(null /*request.getRemoteAddress()*/).map(GeoName::getIsoCode).orElse(null))
     );
   }
 

@@ -4,7 +4,6 @@ import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
 
 import com.google.common.collect.Maps;
-import io.restassured.RestAssured;
 import io.vertx.core.json.JsonObject;
 import java.io.IOException;
 import okhttp3.OkHttpClient;
@@ -130,5 +129,17 @@ public class ClassifiersTest {
         .then()
         .statusCode(equalTo(200))
         .body("headers.X-Quarantyne-Labels", equalTo("FAS"));
+  }
+
+  @Test
+  public void testPcxProxiedRequest(){
+    given()
+        .header("DNT", 1)
+        .header("user-agent", USER_AGENT)
+        .header("x-forwarded-for", "54.242.194.77")
+        .get("/anything")
+        .then()
+        .statusCode(equalTo(200))
+        .body("headers.X-Quarantyne-Labels", equalTo("PCX/AWS"));
   }
 }

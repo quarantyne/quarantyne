@@ -8,6 +8,7 @@ import com.quarantyne.classifiers.Label;
 import com.quarantyne.lib.Fingerprinter;
 import com.quarantyne.lib.HttpRequest;
 import com.quarantyne.lib.HttpRequestBody;
+import com.quarantyne.lib.RemoteIpAddresses;
 import java.time.Duration;
 import java.util.Set;
 import javax.annotation.Nullable;
@@ -17,7 +18,7 @@ import javax.annotation.Nullable;
  * even if their IP is different
  */
 public class IpRotationClassifier implements HttpRequestClassifier {
-  private final Cache<HashCode, String> lastSeenCache;
+  private final Cache<HashCode, RemoteIpAddresses> lastSeenCache;
 
   public IpRotationClassifier() {
     this.lastSeenCache = CacheBuilder
@@ -28,9 +29,9 @@ public class IpRotationClassifier implements HttpRequestClassifier {
 
   @Override
   public Set<Label> classify(HttpRequest httpRequest, @Nullable HttpRequestBody body) {
-    String requestIp = httpRequest.getRemoteAddress();
+    RemoteIpAddresses requestIp = httpRequest.getRemoteIpAddresses();
     HashCode headersHashcode = Fingerprinter.fromHeaders(httpRequest.getHeaders());
-    String seenIp = lastSeenCache.getIfPresent(headersHashcode);
+    RemoteIpAddresses seenIp = lastSeenCache.getIfPresent(headersHashcode);
     if (seenIp != null && !requestIp.equals(seenIp)) {
       return Label.IP_ROTATION;
     }

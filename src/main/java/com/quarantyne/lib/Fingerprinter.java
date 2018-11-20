@@ -15,7 +15,6 @@ public final class Fingerprinter {
       "accept",
       "accept-encoding",
       "accept-language",
-      "cookie",
       "content-length", // in post/put req
       "content-type",   // in post/put req
       "dnt",

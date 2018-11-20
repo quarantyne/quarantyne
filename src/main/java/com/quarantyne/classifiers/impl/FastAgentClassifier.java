@@ -3,10 +3,8 @@ package com.quarantyne.classifiers.impl;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
-import com.google.common.hash.HashCode;
 import com.quarantyne.classifiers.HttpRequestClassifier;
 import com.quarantyne.classifiers.Label;
-import com.quarantyne.lib.Fingerprinter;
 import com.quarantyne.lib.HttpRequest;
 import com.quarantyne.lib.HttpRequestBody;
 import com.quarantyne.util.ExponentialBackOff;
@@ -16,8 +14,8 @@ import javax.annotation.Nullable;
 
 public class FastAgentClassifier implements HttpRequestClassifier {
 
-  private final Cache<HashCode, ExponentialBackOff> penaltyBoxCache;
-  private final Cache<HashCode, Boolean> visitCountCache;
+  private final Cache<HttpRequest, ExponentialBackOff> penaltyBoxCache;
+  private final Cache<HttpRequest, Boolean> visitCountCache;
 
   public FastAgentClassifier() {
     this.visitCountCache = Caffeine
@@ -33,8 +31,7 @@ public class FastAgentClassifier implements HttpRequestClassifier {
 
   @Override
   public Set<Label> classify(final HttpRequest httpRequest, @Nullable final HttpRequestBody body) {
-    HashCode id = Fingerprinter.fromString(httpRequest.getId());
-    ExponentialBackOff backoff = penaltyBoxCache.getIfPresent(id);
+    ExponentialBackOff backoff = penaltyBoxCache.getIfPresent(httpRequest);
     if (backoff != null) {
       if (backoff.isBackedOff()) {
         backoff.touch();
@@ -44,10 +41,10 @@ public class FastAgentClassifier implements HttpRequestClassifier {
         return EMPTY_LABELS;
       }
     }
-    if (visitCountCache.getIfPresent(id) != null) {
-        penaltyBoxCache.put(id, ExponentialBackOff.DEFAULT);
+    if (visitCountCache.getIfPresent(httpRequest) != null) {
+        penaltyBoxCache.put(httpRequest, ExponentialBackOff.DEFAULT);
     }
-    visitCountCache.put(id, true);
+    visitCountCache.put(httpRequest, true);
     return EMPTY_LABELS;
   }
 }

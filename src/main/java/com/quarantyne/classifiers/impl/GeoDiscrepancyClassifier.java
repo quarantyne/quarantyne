@@ -31,7 +31,7 @@ public class GeoDiscrepancyClassifier implements HttpRequestClassifier {
     }
     String isoCountryCode = body.getAny(config.get().getCountryIsoCodeParamKeys());
     if (!Strings.isNullOrEmpty(isoCountryCode)) {
-      Optional<GeoName> geoName = geoIp4j.getGeoName(httpRequest.getRemoteAddress());
+      Optional<GeoName> geoName = geoIp4j.getGeoName(httpRequest.getRemoteIpAddresses().getOrigin());
       if (geoName.isPresent() &&
           geoName.get().getIsoCode().toLowerCase().equalsIgnoreCase(isoCountryCode)) {
         return Label.IP_COUNTRY_DISCREPANCY;

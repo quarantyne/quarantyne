@@ -11,6 +11,7 @@ import com.quarantyne.lib.HttpRequestBodyParser;
 import com.quarantyne.lib.HttpRequestMethod;
 import com.quarantyne.lib.HttpResponse;
 import com.quarantyne.lib.QuarantyneHeaders;
+import com.quarantyne.lib.RemoteIpAddressesParser;
 import com.quarantyne.util.CaseInsensitiveStringKV;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Future;
@@ -92,13 +93,16 @@ public final class ProxyVerticle extends AbstractVerticle {
         frontReq.uri()
     );
 
+    CaseInsensitiveStringKV frontReqHeaders =
+        new CaseInsensitiveStringKV(frontReq.headers().entries());
+
     backReq.headers().setAll(frontReq.headers());
     backReq.headers().set(HttpHeaders.HOST, configArgs.getEgress().getHost());
     // inject quarantyne headers, if any
     HttpRequest qReq = new HttpRequest(
         HttpRequestMethod.valueOf(frontReq.method().toString().toUpperCase()),
-        new CaseInsensitiveStringKV(frontReq.headers().entries()),
-        frontReq.remoteAddress().host(),
+        frontReqHeaders,
+        RemoteIpAddressesParser.parse(frontReqHeaders, frontReq.remoteAddress().host()),
         frontReq.path()
     );
     @Nullable final HttpRequestBody qBody =
