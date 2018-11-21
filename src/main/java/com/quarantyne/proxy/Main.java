@@ -4,7 +4,7 @@ import com.google.common.collect.Lists;
 import com.google.common.hash.BloomFilter;
 import com.quarantyne.assets.AssetException;
 import com.quarantyne.assets.AssetRegistry;
-import com.quarantyne.classifiers.CompositeClassifier;
+import com.quarantyne.classifiers.MainClassifier;
 import com.quarantyne.classifiers.HttpRequestClassifier;
 import com.quarantyne.classifiers.impl.CompromisedPasswordClassifier;
 import com.quarantyne.classifiers.impl.DisposableEmailClassifier;
@@ -106,14 +106,13 @@ public class Main {
         // new SuspiciousLoginActivityClassifier(geoIp4j)
     );
 
-    CompositeClassifier quarantyneRequestClassifier = new CompositeClassifier(httpRequestClassifierList);
+    MainClassifier mainClassifier = new MainClassifier(httpRequestClassifierList);
 
     if (configArgs.getAdminIpPort().isPresent()) {
       vertx.deployVerticle(new AdminVerticle(configArgs.getAdminIpPort().get()));
-
     }
 
-    vertx.deployVerticle(() -> new ProxyVerticle(configArgs, quarantyneRequestClassifier,
+    vertx.deployVerticle(() -> new ProxyVerticle(configArgs, mainClassifier,
             configSupplier),
         new DeploymentOptions().setInstances(numCpus * 2 + 1));
 

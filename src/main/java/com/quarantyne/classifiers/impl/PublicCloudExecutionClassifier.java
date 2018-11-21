@@ -6,7 +6,6 @@ import com.quarantyne.lib.HttpRequest;
 import com.quarantyne.lib.HttpRequestBody;
 import com.quarantyne.util.CidrMembership;
 import java.util.Optional;
-import java.util.Set;
 import javax.annotation.Nullable;
 
 //TODO redo this impl it's awful. Aggregate CIDR providers + use prefix trie to speed up search
@@ -23,7 +22,7 @@ public class PublicCloudExecutionClassifier implements HttpRequestClassifier {
   }
 
   @Override
-  public Set<Label> classify(HttpRequest httpRequest, @Nullable HttpRequestBody body) {
+  public Label classify(HttpRequest httpRequest, @Nullable HttpRequestBody body) {
     Optional<String> isAws = awsMembership.get(httpRequest.getRemoteIpAddresses().getOrigin());
     if (isAws.isPresent()) {
       return Label.PUBLIC_CLOUD_EXECUTION_AWS;
@@ -32,8 +31,6 @@ public class PublicCloudExecutionClassifier implements HttpRequestClassifier {
     if (isGcp.isPresent()) {
       return Label.PUBLIC_CLOUD_EXECUTION_GCP;
     }
-    return EMPTY_LABELS;
+    return Label.NONE;
   }
-
-
 }

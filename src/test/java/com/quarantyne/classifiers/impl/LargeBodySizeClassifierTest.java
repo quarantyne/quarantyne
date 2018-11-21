@@ -17,7 +17,7 @@ public class LargeBodySizeClassifierTest {
     LargeBodySizeClassifier classifier = new LargeBodySizeClassifier();
     HttpRequest req = TestHttpRequest.REQ();
     HttpRequestBody body = TestHttpRequestBody.EMPTY;
-    assertThat(classifier.classify(req, body)).isEmpty();
+    assertThat(classifier.classify(req, body)).isEqualTo(Label.NONE);
     JsonObject largePayload =
         new JsonObject().put("k",new String(new byte[LargeBodySizeClassifier.MAX_SIZE_BYTES]));
     assertThat(classifier.classify(req, TestHttpRequestBody.make(largePayload)))

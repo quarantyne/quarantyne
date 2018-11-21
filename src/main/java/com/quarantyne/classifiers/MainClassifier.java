@@ -5,31 +5,31 @@ import com.quarantyne.lib.HttpRequest;
 import com.quarantyne.lib.HttpRequestBody;
 import com.quarantyne.lib.HttpResponse;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 
 
-public class CompositeClassifier implements HttpRequestClassifier {
+public class MainClassifier {
 
   private final List<HttpRequestClassifier> httpRequestClassifiers;
 
-  public CompositeClassifier(
+  public MainClassifier(
       List<HttpRequestClassifier> httpRequestClassifiers) {
     this.httpRequestClassifiers = httpRequestClassifiers;
   }
 
-  @Override
   public Set<Label> classify(final HttpRequest request, @Nullable HttpRequestBody body) {
-    Set<Label> labels = Sets.newHashSet();
-    httpRequestClassifiers
+    return httpRequestClassifiers
         .stream()
-        .filter(c -> c.test(request, body)).forEach(c -> {
-      labels.addAll(c.classify(request, body));
-    });
-    return labels;
+        .filter(c -> c.test(request, body))
+        .map(c -> c.classify(request, body))
+        .filter(Objects::nonNull)
+        .collect(Collectors.toSet());
   }
 
-  @Override
   public void record(HttpResponse response, HttpRequest request,
       @Nullable HttpRequestBody body) {
     httpRequestClassifiers

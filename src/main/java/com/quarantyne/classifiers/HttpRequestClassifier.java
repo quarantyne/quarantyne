@@ -1,17 +1,14 @@
 package com.quarantyne.classifiers;
 
-import com.google.common.collect.Sets;
 import com.quarantyne.lib.HttpRequest;
 import com.quarantyne.lib.HttpRequestBody;
 import com.quarantyne.lib.HttpRequestValidator;
 import com.quarantyne.lib.HttpResponse;
-import java.util.Set;
 import javax.annotation.Nullable;
 import lombok.NonNull;
 
-public interface HttpRequestClassifier extends HttpRequestValidator  {
-  Set<Label> EMPTY_LABELS = Sets.newHashSet();
-  Set<Label> classify(@NonNull final HttpRequest httpRequest, @Nullable final HttpRequestBody body);
+public interface HttpRequestClassifier extends HttpRequestValidator {
+  @Nullable Label classify(@NonNull final HttpRequest httpRequest, @Nullable final HttpRequestBody body);
   default boolean test(@NonNull final HttpRequest httpRequest, @Nullable final HttpRequestBody body) {
     return true;
   }

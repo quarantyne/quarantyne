@@ -1,7 +1,7 @@
 package com.quarantyne.proxy.verticles;
 
 import com.google.common.base.Joiner;
-import com.quarantyne.classifiers.CompositeClassifier;
+import com.quarantyne.classifiers.MainClassifier;
 import com.quarantyne.classifiers.Label;
 import com.quarantyne.config.Config;
 import com.quarantyne.config.ConfigArgs;
@@ -35,12 +35,12 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public final class ProxyVerticle extends AbstractVerticle {
   private final ConfigArgs configArgs;
-  private final CompositeClassifier quarantyneClassifier;
+  private final MainClassifier quarantyneClassifier;
   private HttpClient httpClient;
   private Supplier<Config> configSupplier;
 
   public ProxyVerticle(ConfigArgs configArgs,
-      CompositeClassifier quarantyneClassifier,
+      MainClassifier quarantyneClassifier,
       Supplier<Config> configSupplier) {
     this.configArgs = configArgs;
     this.quarantyneClassifier = quarantyneClassifier;

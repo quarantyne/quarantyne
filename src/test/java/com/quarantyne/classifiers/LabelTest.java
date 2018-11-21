@@ -10,4 +10,9 @@ public class LabelTest {
   public void testLabelEquality() {
     assertThat(Label.COMPROMISED_PASSWORD).isEqualTo(Label.COMPROMISED_PASSWORD);
   }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void testParseInvalid() {
+    Label.parse("a,b,c");
+  }
 }

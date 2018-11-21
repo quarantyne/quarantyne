@@ -1,7 +1,6 @@
 package com.quarantyne.classifiers.impl;
 
 import com.google.common.base.Strings;
-import com.google.common.collect.Sets;
 import com.google.common.hash.BloomFilter;
 import com.quarantyne.classifiers.HttpRequestClassifier;
 import com.quarantyne.classifiers.Label;
@@ -9,7 +8,7 @@ import com.quarantyne.config.Config;
 import com.quarantyne.config.QIdentityAction;
 import com.quarantyne.lib.HttpRequest;
 import com.quarantyne.lib.HttpRequestBody;
-import java.util.Set;
+import java.util.Optional;
 import java.util.function.Supplier;
 import java.util.regex.Pattern;
 import javax.annotation.Nullable;
@@ -28,7 +27,7 @@ public class DisposableEmailClassifier implements HttpRequestClassifier {
   }
 
   @Override
-  public Set<Label> classify(final HttpRequest httpRequest, final HttpRequestBody body) {
+  public Label classify(final HttpRequest httpRequest, final HttpRequestBody body) {
     String email = null;
 
     // check for registration or just about any write
@@ -44,10 +43,10 @@ public class DisposableEmailClassifier implements HttpRequestClassifier {
     if (!Strings.isNullOrEmpty(email)) {
       String[] emailParts = p.split(email, 2);
       if (emailParts.length == 2 && disposableEmailBf.mightContain(emailParts[1])) {
-        return Sets.newHashSet(Label.DISPOSABLE_EMAIL);
+        return Label.DISPOSABLE_EMAIL;
       }
     }
-    return EMPTY_LABELS;
+    return Label.NONE;
   }
 
 

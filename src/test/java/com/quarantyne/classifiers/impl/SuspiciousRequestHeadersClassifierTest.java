@@ -17,7 +17,7 @@ public class SuspiciousRequestHeadersClassifierTest {
   public void testClassifier() {
     SuspiciousRequestHeadersClassifier classifier = new SuspiciousRequestHeadersClassifier();
     HttpRequest req = TestHttpRequest.REQ();
-    assertThat(classifier.classify(req, null)).isEmpty();
+    assertThat(classifier.classify(req, null)).isEqualTo(Label.NONE);
     Map<String, String> smallHeaders = Maps.newHashMap();
     smallHeaders.put(HttpHeaders.HOST, "example.com");
     smallHeaders.put(HttpHeaders.CONNECTION, "close");

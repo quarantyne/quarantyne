@@ -2,8 +2,8 @@ package com.quarantyne.config;
 
 
 import com.google.common.collect.Sets;
+import com.quarantyne.classifiers.Label;
 import java.util.Set;
-import javax.annotation.Nullable;
 import lombok.Builder;
 import lombok.Data;
 
@@ -19,8 +19,8 @@ public class Config {
   final QIdentityAction registerAction;
   final Set<String> emailParamKeys;
   final Set<String> countryIsoCodeParamKeys;
-  @Nullable  final String blockedRequestPage;
-  final Set<String> blockedClasses;
+  final String blockedRequestPage;
+  final Set<Label> blockedClasses;
   final boolean isDisabled;
 
   public Config() {
@@ -29,14 +29,14 @@ public class Config {
     this.registerAction = new QIdentityAction("/register", "email", "password");
     this.emailParamKeys = emptySet;
     this.countryIsoCodeParamKeys = emptySet;
-    this.blockedRequestPage = null;
-    this.blockedClasses = emptySet;
+    this.blockedRequestPage = "/";
+    this.blockedClasses = Sets.newHashSet();
     this.isDisabled = false;
   }
 
   Config(QIdentityAction loginAction, QIdentityAction registerAction,
       Set<String> emailParamKeys, Set<String> countryIsoCodeParamKeys,
-      String blockedRequestPage, Set<String> blockedClasses, boolean isDisabled) {
+      String blockedRequestPage, Set<Label> blockedClasses, boolean isDisabled) {
     this.loginAction = loginAction;
     this.registerAction = registerAction;
     this.emailParamKeys = emailParamKeys;
@@ -46,5 +46,11 @@ public class Config {
     this.isDisabled = isDisabled;
   }
 
+  public boolean isBlocked(Label label) {
+    return Label.ALL.contains(label);
+  }
 
+  public boolean isBlocked(Set<Label> labels) {
+    return ! Sets.intersection(Label.ALL, labels).isEmpty();
+  }
 }

@@ -34,11 +34,11 @@ public class SuspiciousLoginActivityClassifier implements HttpRequestClassifier 
   }
 
   @Override
-  public Set<Label> classify(HttpRequest httpRequest, HttpRequestBody body) {
+  public Label classify(HttpRequest httpRequest, HttpRequestBody body) {
     if (body == null) {
-      return EMPTY_LABELS;
+      return Label.NONE;
     }
-    String loginIdentifier = body.get( config.get().getLoginAction().getIdentifierParam());
+    String loginIdentifier = body.get(config.get().getLoginAction().getIdentifierParam());
     if (Strings.isNullOrEmpty(loginIdentifier)) {
       String thisLoginCountry = geoIp4j
           .getGeoName(httpRequest.getRemoteIpAddresses().getOrigin())

@@ -9,7 +9,6 @@ import com.quarantyne.geoip4j.GeoName;
 import com.quarantyne.lib.HttpRequest;
 import com.quarantyne.lib.HttpRequestBody;
 import java.util.Optional;
-import java.util.Set;
 import java.util.function.Supplier;
 import javax.annotation.Nullable;
 
@@ -25,9 +24,9 @@ public class GeoDiscrepancyClassifier implements HttpRequestClassifier {
   }
 
   @Override
-  public Set<Label> classify(HttpRequest httpRequest, HttpRequestBody body) {
+  public Label classify(HttpRequest httpRequest, HttpRequestBody body) {
     if (body == null) {
-      return EMPTY_LABELS;
+      return Label.NONE;
     }
     String isoCountryCode = body.getAny(config.get().getCountryIsoCodeParamKeys());
     if (!Strings.isNullOrEmpty(isoCountryCode)) {

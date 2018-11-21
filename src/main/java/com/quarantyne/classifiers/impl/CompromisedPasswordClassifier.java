@@ -2,7 +2,6 @@ package com.quarantyne.classifiers.impl;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
-import com.google.common.collect.Sets;
 import com.google.common.hash.BloomFilter;
 import com.quarantyne.classifiers.HttpRequestClassifier;
 import com.quarantyne.classifiers.Label;
@@ -10,7 +9,7 @@ import com.quarantyne.config.Config;
 import com.quarantyne.config.QIdentityAction;
 import com.quarantyne.lib.HttpRequest;
 import com.quarantyne.lib.HttpRequestBody;
-import java.util.Set;
+import java.util.Optional;
 import java.util.function.Supplier;
 import javax.annotation.Nullable;
 import lombok.extern.slf4j.Slf4j;
@@ -31,9 +30,9 @@ public class CompromisedPasswordClassifier implements HttpRequestClassifier {
   }
 
   @Override
-  public Set<Label> classify(final HttpRequest httpRequest, final HttpRequestBody body) {
+  public Label classify(final HttpRequest httpRequest, final HttpRequestBody body) {
     if (body == null) {
-      return EMPTY_LABELS;
+      return Label.NONE;
     }
     String passwordIdentifier = discoverPasswordIdentifier(
         httpRequest.getPath(),
@@ -42,9 +41,9 @@ public class CompromisedPasswordClassifier implements HttpRequestClassifier {
     if (!Strings.isNullOrEmpty(passwordIdentifier) &&
         !Strings.isNullOrEmpty(body.get(passwordIdentifier)) &&
         compromisedPasswordBloomFilter.mightContain(body.get(passwordIdentifier))) {
-      return Sets.newHashSet(Label.COMPROMISED_PASSWORD);
+      return Label.COMPROMISED_PASSWORD;
     }
-    return EMPTY_LABELS;
+    return Label.NONE;
   }
 
   String discoverPasswordIdentifier(String path, QIdentityAction...actions) {

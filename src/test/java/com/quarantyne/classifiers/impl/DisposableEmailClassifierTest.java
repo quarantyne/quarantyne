@@ -34,16 +34,16 @@ public class DisposableEmailClassifierTest extends AbstractClassifierTest {
     HttpRequest defaultRequest = TestHttpRequest.REQ();
 
     // null empty
-    assertThat(classifier.classify(defaultRequest, null)).isEmpty();
-    assertThat(classifier.classify(defaultRequest, TestHttpRequestBody.EMPTY)).isEmpty();
+    assertThat(classifier.classify(defaultRequest, null)).isEqualTo(Label.NONE);
+    assertThat(classifier.classify(defaultRequest, TestHttpRequestBody.EMPTY)).isEqualTo(Label.NONE);
 
     // no key matches password
     assertThat(classifier.classify(defaultRequest,
-        TestHttpRequestBody.make(new JsonObject().put("name", "john")))).isEmpty();
+        TestHttpRequestBody.make(new JsonObject().put("name", "john")))).isEqualTo(Label.NONE);
 
     // a key matches password but password is not in bloomf
     assertThat(classifier.classify(defaultRequest,
-        TestHttpRequestBody.make(new JsonObject().put("email", "john@gmail.com")))).isEmpty();
+        TestHttpRequestBody.make(new JsonObject().put("email", "john@gmail.com")))).isEqualTo(Label.NONE);
 
     // match
     HttpRequest req = new TestHttpRequest.Builder().setPath("/register").build();

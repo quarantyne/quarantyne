@@ -9,7 +9,7 @@ import com.quarantyne.lib.HttpRequest;
 import com.quarantyne.lib.HttpRequestBody;
 import com.quarantyne.util.ExponentialBackOff;
 import java.time.Duration;
-import java.util.Set;
+import java.util.Optional;
 import javax.annotation.Nullable;
 
 public class FastAgentClassifier implements HttpRequestClassifier {
@@ -30,7 +30,7 @@ public class FastAgentClassifier implements HttpRequestClassifier {
   }
 
   @Override
-  public Set<Label> classify(final HttpRequest httpRequest, @Nullable final HttpRequestBody body) {
+  public Label classify(final HttpRequest httpRequest, @Nullable final HttpRequestBody body) {
     ExponentialBackOff backoff = penaltyBoxCache.getIfPresent(httpRequest);
     if (backoff != null) {
       if (backoff.isBackedOff()) {
@@ -38,13 +38,13 @@ public class FastAgentClassifier implements HttpRequestClassifier {
         return Label.FAST_BROWSER;
       } else {
         penaltyBoxCache.invalidate(backoff);
-        return EMPTY_LABELS;
+        return Label.NONE;
       }
     }
     if (visitCountCache.getIfPresent(httpRequest) != null) {
         penaltyBoxCache.put(httpRequest, ExponentialBackOff.DEFAULT);
     }
     visitCountCache.put(httpRequest, true);
-    return EMPTY_LABELS;
+    return Label.NONE;
   }
 }
