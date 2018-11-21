@@ -1,12 +1,10 @@
 package com.quarantyne.classifiers;
 
-import com.google.common.collect.Sets;
 import com.quarantyne.lib.HttpRequest;
 import com.quarantyne.lib.HttpRequestBody;
 import com.quarantyne.lib.HttpResponse;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import javax.annotation.Nullable;

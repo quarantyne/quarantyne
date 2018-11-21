@@ -2,7 +2,6 @@ package com.quarantyne.classifiers;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.Value;

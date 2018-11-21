@@ -1,8 +1,8 @@
 package com.quarantyne.proxy.verticles;
 
 import com.google.common.base.Joiner;
-import com.quarantyne.classifiers.MainClassifier;
 import com.quarantyne.classifiers.Label;
+import com.quarantyne.classifiers.MainClassifier;
 import com.quarantyne.config.Config;
 import com.quarantyne.config.ConfigArgs;
 import com.quarantyne.lib.HttpRequest;

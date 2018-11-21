@@ -9,7 +9,6 @@ import com.quarantyne.config.Config;
 import com.quarantyne.config.QIdentityAction;
 import com.quarantyne.lib.HttpRequest;
 import com.quarantyne.lib.HttpRequestBody;
-import java.util.Optional;
 import java.util.function.Supplier;
 import javax.annotation.Nullable;
 import lombok.extern.slf4j.Slf4j;

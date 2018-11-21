@@ -9,7 +9,6 @@ import com.quarantyne.lib.HttpRequest;
 import com.quarantyne.lib.HttpRequestBody;
 import com.quarantyne.util.ExponentialBackOff;
 import java.time.Duration;
-import java.util.Optional;
 import javax.annotation.Nullable;
 
 public class FastAgentClassifier implements HttpRequestClassifier {
