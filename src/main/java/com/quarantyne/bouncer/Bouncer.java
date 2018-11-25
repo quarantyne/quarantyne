@@ -52,7 +52,6 @@ public class Bouncer {
     } else {
       path = blockedPage;
     }
-    log.info("bouncing to {} path {}", egressUrl.toHuman(), path);
 
     HttpClientOptions httpClientOptions = new HttpClientOptions();
     httpClientOptions.setKeepAlive(true);
@@ -71,7 +70,6 @@ public class Bouncer {
       Buffer body = Buffer.buffer();
       bouncerRep.handler(body::appendBuffer);
       bouncerRep.endHandler(h -> {
-        log.info("bouncing request");
         frontRep.setStatusCode(200).end(body);
       });
     }).exceptionHandler(ex -> {

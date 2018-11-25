@@ -6,6 +6,7 @@ import com.quarantyne.classifiers.Label;
 import java.util.Set;
 import lombok.Builder;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Quarantyne configuration.
@@ -13,8 +14,9 @@ import lombok.Data;
  */
 @Data
 @Builder
+@Slf4j
 public class Config {
-
+  final static Set<String> EMPTY_SET = Sets.newHashSet();
   final QIdentityAction loginAction;
   final QIdentityAction registerAction;
   final Set<String> emailParamKeys;
@@ -24,14 +26,13 @@ public class Config {
   final boolean isDisabled;
 
   public Config() {
-    Set<String> emptySet = Sets.newHashSet();
-    this.loginAction = new QIdentityAction("/login", "email", "password");
-    this.registerAction = new QIdentityAction("/register", "email", "password");
-    this.emailParamKeys = emptySet;
-    this.countryIsoCodeParamKeys = emptySet;
-    this.blockedRequestPage = "https://raw.githubusercontent.com/AndiDittrich/HttpErrorPages/master/dist/HTTP500.html";
-    this.blockedClasses = Sets.newHashSet();
-    this.isDisabled = false;
+    this(new QIdentityAction("/login", "email", "password"),
+        new QIdentityAction("/register", "email", "password"),
+        EMPTY_SET,
+        EMPTY_SET,
+        "https://raw.githubusercontent.com/AndiDittrich/HttpErrorPages/master/dist/HTTP500.html",
+        Sets.newHashSet(Label.FAST_BROWSER),
+        false);
   }
 
   Config(QIdentityAction loginAction, QIdentityAction registerAction,
@@ -44,14 +45,14 @@ public class Config {
     this.blockedRequestPage = blockedRequestPage;
     this.blockedClasses = blockedClasses;
     this.isDisabled = isDisabled;
+    log.info("configuration used is [{}]", toString());
   }
 
   public boolean isBlocked(Label label) {
-    return Label.ALL.contains(label);
+    return label.equals(Label.ALL) || blockedClasses.contains(label);
   }
 
   public boolean isBlocked(Set<Label> labels) {
-    System.out.println(labels);
-    return ! Sets.intersection(labels, Label.ALL).isEmpty();
+    return blockedClasses.contains(Label.ALL) || ! Sets.intersection(labels, blockedClasses).isEmpty();
   }
 }

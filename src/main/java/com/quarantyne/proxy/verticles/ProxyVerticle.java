@@ -108,10 +108,8 @@ public final class ProxyVerticle extends AbstractVerticle {
     Set<Label> quarantyneLabels = quarantyneClassifier.classify(qReq, qBody);
 
     if (configSupplier.get().isBlocked(quarantyneLabels)) {
-      log.info("blocking request {} with labels {}", qReq.getIdentifier(), quarantyneLabels);
-
+      log.info("blocking request {} because we are blocking {}", qReq.getFingerprint(), quarantyneLabels);
       bouncer.bounce(frontRep);
-
     } else {
       HttpClientRequest backReq = httpClient.request(
           frontReq.method(),

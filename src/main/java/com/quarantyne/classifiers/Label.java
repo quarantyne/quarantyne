@@ -30,8 +30,8 @@ public class Label {
   public static Label PUBLIC_CLOUD_EXECUTION_GCP = new Label("PCX/GCP");
   public static Label IP_COUNTRY_DISCREPANCY = new Label("IPD");
   public static Label SUSPICIOUS_GEO = new Label("SGE");
-
-  public static Set<Label> ALL = Sets.newHashSet(
+  public static Label ALL = new Label("ALL");
+  public static Set<Label> LABELS = Sets.newHashSet(
       LARGE_BODY,
       FAST_BROWSER,
       COMPROMISED_PASSWORD,
@@ -45,7 +45,7 @@ public class Label {
       SUSPICIOUS_GEO
   );
 
-  private static Set<String> ALL_STRING = ALL.stream()
+  private static Set<String> ALL_STRING = LABELS.stream()
       .map(Label::getName).collect(Collectors.toSet());
 
   @Override

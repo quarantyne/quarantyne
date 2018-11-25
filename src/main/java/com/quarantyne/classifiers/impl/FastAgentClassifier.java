@@ -19,12 +19,12 @@ public class FastAgentClassifier implements HttpRequestClassifier {
   public FastAgentClassifier() {
     this.visitCountCache = Caffeine
         .newBuilder()
-        .expireAfterWrite(Duration.ofMillis(900))
+        .expireAfterWrite(Duration.ofMillis(1300))
         .build();
 
     this.penaltyBoxCache = Caffeine
         .newBuilder()
-        .expireAfterWrite(Duration.ofSeconds(5))
+        .expireAfterWrite(Duration.ofSeconds(7))
         .build();
   }
 
