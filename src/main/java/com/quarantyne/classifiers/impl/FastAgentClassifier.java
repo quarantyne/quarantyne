@@ -10,7 +10,9 @@ import com.quarantyne.lib.HttpRequestBody;
 import com.quarantyne.util.ExponentialBackOff;
 import java.time.Duration;
 import javax.annotation.Nullable;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class FastAgentClassifier implements HttpRequestClassifier {
 
   private final Cache<HttpRequest, ExponentialBackOff> penaltyBoxCache;
@@ -24,7 +26,7 @@ public class FastAgentClassifier implements HttpRequestClassifier {
 
     this.penaltyBoxCache = Caffeine
         .newBuilder()
-        .expireAfterWrite(Duration.ofSeconds(5))
+        .expireAfterWrite(Duration.ofSeconds(12))
         .build();
   }
 
@@ -34,6 +36,7 @@ public class FastAgentClassifier implements HttpRequestClassifier {
     if (backoff != null) {
       if (backoff.isBackedOff()) {
         backoff.touch();
+        log.debug("{} is browsing too fast", httpRequest.getFingerprint());
         return Label.FAST_BROWSER;
       } else {
         penaltyBoxCache.invalidate(backoff);

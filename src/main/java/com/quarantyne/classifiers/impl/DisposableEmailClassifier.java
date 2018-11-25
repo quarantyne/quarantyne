@@ -42,6 +42,7 @@ public class DisposableEmailClassifier implements HttpRequestClassifier {
     if (!Strings.isNullOrEmpty(email)) {
       String[] emailParts = p.split(email, 2);
       if (emailParts.length == 2 && disposableEmailBf.mightContain(emailParts[1])) {
+        log.debug("{}is  using disposable email {}", httpRequest.getFingerprint(), emailParts[1]);
         return Label.DISPOSABLE_EMAIL;
       }
     }

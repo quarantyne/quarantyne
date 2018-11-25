@@ -14,7 +14,9 @@ public class SuspiciousRequestHeadersClassifier implements HttpRequestClassifier
   public Label classify(HttpRequest httpRequest, @Nullable HttpRequestBody body) {
     if (httpRequest.getHeaders().size() <= 5) {
       if (log.isDebugEnabled()) {
-        log.debug("suspicious headers: {}", httpRequest.getHeaders());
+        log.debug("{} headers signature is suspicious {}",
+            httpRequest.getFingerprint(),
+            httpRequest.getHeaders());
       }
       return Label.SUSPICIOUS_HEADERS;
     }

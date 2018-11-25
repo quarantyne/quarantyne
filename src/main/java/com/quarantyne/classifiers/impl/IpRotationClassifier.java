@@ -34,7 +34,9 @@ public class IpRotationClassifier implements HttpRequestClassifier {
     HashCode headersHashcode = Fingerprinter.fromHeaders(httpRequest.getHeaders());
     RemoteIpAddresses seenIp = lastSeenCache.getIfPresent(headersHashcode);
     if (seenIp != null && !requestIp.getOrigin().equals(seenIp.getOrigin())) {
-      log.debug("request ip {} / seen ip {} / headers hashcode {}", requestIp, seenIp, headersHashcode);
+      log.debug("{} is rotating is IP (this request ip {} / last seen ip {} / headers signature {}",
+          httpRequest.getFingerprint(),
+          requestIp, seenIp, headersHashcode);
       return Label.IP_ROTATION;
     }
 

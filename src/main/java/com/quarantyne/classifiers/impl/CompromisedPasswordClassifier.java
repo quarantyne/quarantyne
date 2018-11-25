@@ -40,6 +40,7 @@ public class CompromisedPasswordClassifier implements HttpRequestClassifier {
     if (!Strings.isNullOrEmpty(passwordIdentifier) &&
         !Strings.isNullOrEmpty(body.get(passwordIdentifier)) &&
         compromisedPasswordBloomFilter.mightContain(body.get(passwordIdentifier))) {
+      log.debug("{} is using a compromised password", httpRequest.getFingerprint());
       return Label.COMPROMISED_PASSWORD;
     }
     return Label.NONE;

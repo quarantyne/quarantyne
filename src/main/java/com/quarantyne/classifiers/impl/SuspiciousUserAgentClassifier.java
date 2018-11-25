@@ -17,7 +17,7 @@ public class SuspiciousUserAgentClassifier implements HttpRequestClassifier {
     String ua = httpRequest.getHeaders().get(UA);
     if (ua == null || ua.length() < MIN_LEN) {
       if (log.isDebugEnabled()) {
-        log.debug("suspicious user-agent: {}", ua);
+        log.debug("{} user-agent ({}) is suspicious", httpRequest.getFingerprint(), ua);
       }
       return Label.SUSPICIOUS_UA;
     }

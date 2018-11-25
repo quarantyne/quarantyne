@@ -19,7 +19,9 @@ public class LargeBodySizeClassifier implements HttpRequestClassifier {
     }
     if (body.getBody().length > MAX_SIZE_BYTES) {
       if (log.isDebugEnabled()) {
-        log.debug("large body size: {} bytes", body.getBody().length);
+        log.debug("{} is sending a large ({} bytes) body size",
+            httpRequest.getFingerprint(),
+            body.getBody().length);
       }
       return Label.LARGE_BODY;
     }
