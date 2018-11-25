@@ -74,3 +74,9 @@ dependencies {
 shadowJar {
     classifier = null
 }
+
+
+
+task upload(type: Exec) {
+    commandLine "/usr/local/bin/aws", "s3", "sync", "build/asciidoc/html5", "s3://docs.quarantyne.com/", "--acl", "public-read"
+}

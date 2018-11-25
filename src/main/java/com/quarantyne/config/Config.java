@@ -6,7 +6,6 @@ import com.quarantyne.classifiers.Label;
 import java.util.Set;
 import lombok.Builder;
 import lombok.Data;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * Quarantyne configuration.
@@ -14,7 +13,6 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Data
 @Builder
-@Slf4j
 public class Config {
   final static Set<String> EMPTY_SET = Sets.newHashSet();
   final QIdentityAction loginAction;
@@ -45,7 +43,6 @@ public class Config {
     this.blockedRequestPage = blockedRequestPage;
     this.blockedClasses = blockedClasses;
     this.isDisabled = isDisabled;
-    log.info("configuration used is [{}]", toString());
   }
 
   public boolean isBlocked(Label label) {
@@ -53,6 +50,8 @@ public class Config {
   }
 
   public boolean isBlocked(Set<Label> labels) {
-    return blockedClasses.contains(Label.ALL) || ! Sets.intersection(labels, blockedClasses).isEmpty();
+    return !labels.isEmpty() &&
+        (blockedClasses.contains(Label.ALL) ||
+        ! Sets.intersection(labels, blockedClasses).isEmpty());
   }
 }

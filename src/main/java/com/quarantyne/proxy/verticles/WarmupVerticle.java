@@ -38,7 +38,7 @@ public final class WarmupVerticle extends AbstractVerticle {
     httpClient
         .request(HttpMethod.GET, port, host, "/")
         .exceptionHandler(ex -> {
-          log.error("error while warming up to " + host, ex);
+          log.error("error while warming up to {}, reason: {}. Retrying...", host, ex.getMessage());
         }).handler(r -> {
       if (isSuccess(r.statusCode())) {
         log.info("warmup of {}:{} complete", host, port);

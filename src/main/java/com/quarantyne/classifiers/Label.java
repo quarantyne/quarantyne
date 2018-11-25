@@ -2,6 +2,7 @@ package com.quarantyne.classifiers;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
+import java.util.Collection;
 import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.Value;
@@ -42,7 +43,8 @@ public class Label {
       PUBLIC_CLOUD_EXECUTION_AWS,
       PUBLIC_CLOUD_EXECUTION_GCP,
       IP_COUNTRY_DISCREPANCY,
-      SUSPICIOUS_GEO
+      SUSPICIOUS_GEO,
+      ALL
   );
 
   private static Set<String> ALL_STRING = LABELS.stream()
@@ -53,7 +55,7 @@ public class Label {
     return name;
   }
 
-  public static Set<Label> parse(Set<String> labels) throws IllegalArgumentException {
+  public static Set<Label> parse(Collection<String> labels) throws IllegalArgumentException {
     Set<Label> rep = Sets.newHashSet();
     for (String name: labels) {
       name = name.trim().toUpperCase();
@@ -66,7 +68,7 @@ public class Label {
     return rep;
   }
 
-  public static Set<Label> parse(String labels)  throws IllegalArgumentException {
+  public static Set<Label> parse(String labels) throws IllegalArgumentException {
     if (Strings.isNullOrEmpty(labels)) {
       throw new IllegalArgumentException("Labels must be separated by a comma");
     }

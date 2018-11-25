@@ -1,6 +1,7 @@
 package com.quarantyne.config;
 
 import com.google.common.collect.Sets;
+import com.quarantyne.classifiers.Label;
 import io.vertx.config.ConfigRetriever;
 import io.vertx.config.ConfigRetrieverOptions;
 import io.vertx.core.Vertx;
@@ -61,7 +62,7 @@ public class ConfigSupplier implements Supplier<Config> {
       h -> {
         if (h.succeeded()) {
           ref.set(read(h.result()));
-          log.debug("read config with great success");
+          log.info("configuration used is [{}]", ref.get().toString());
 
           /*
           log.info("configuration will be reloaded every {} ms",
@@ -125,7 +126,7 @@ public class ConfigSupplier implements Supplier<Config> {
 
     // blocked_classes
     Optional.ofNullable(newConfig.getJsonArray(BLOCKED_CLASSES)).ifPresent(v ->
-        updatedConfig.blockedClasses(Sets.newHashSet(v.getList()))
+        updatedConfig.blockedClasses(Label.parse(v.getList()))
     );
 
     // is_disabled

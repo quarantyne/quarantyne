@@ -67,6 +67,7 @@ public class Main {
       log.info("==> admin @ http://{}:{}", ipPort.getIp(), ipPort.getPort());
     });
 
+    log.info("see available options with --help");
     int numCpus = CpuCoreSensor.availableProcessors();
 
     VertxOptions vertxOptions = new VertxOptions();
@@ -84,12 +85,8 @@ public class Main {
       configSupplier = new ConfigSupplier(vertx,
           new ConfigRetrieverOptionsSupplier(configArgs.getConfigFile().get()));
     } else {
+      log.info("No configuration file was specified, using default settings");
       configSupplier = new ConfigSupplier();
-    }
-
-    // require a config to start
-    if (configSupplier.get() == null) {
-      log.info("No quarantyne configuration was specified, using default settings");
     }
 
     // quarantyne classifiers

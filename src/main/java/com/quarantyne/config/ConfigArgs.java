@@ -9,10 +9,10 @@ import org.apache.commons.validator.routines.UrlValidator;
 
 @Slf4j
 public final class ConfigArgs {
-  @Parameter(names = "--ingress", description = "ip:port of inbound web traffic. Default 0.0.0.0:8080")
+  @Parameter(names = "--ingress", description = "ip:port of inbound web traffic.")
   private String ingress = "0.0.0.0:8080";
 
-  @Parameter(names = "--egress", description = "HTTP destination where Quarantyne forwards annotated web traffic. Default http://httpbin.org")
+  @Parameter(names = "--egress", description = "HTTP destination where Quarantyne forwards annotated web traffic.")
   private String egress = "http://httpbin.org";
 
   @Parameter(names = "--admin", description = "internal ip:port where to access admin, UI and metrics. Optional")
