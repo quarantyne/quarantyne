@@ -61,6 +61,9 @@ public class ConfigSupplier implements Supplier<Config> {
       h -> {
         if (h.succeeded()) {
           ref.set(read(h.result()));
+          log.debug("read config with great success");
+
+          /*
           log.info("configuration will be reloaded every {} ms",
                 configRetrieverOptions.getScanPeriod());
             configRetriever.listen(
@@ -75,6 +78,7 @@ public class ConfigSupplier implements Supplier<Config> {
                     log.error("error while loading configuration, skipping update");
                   }
                 });
+                */
         } else {
           log.error("failed to load configuration ", h.cause());
         }

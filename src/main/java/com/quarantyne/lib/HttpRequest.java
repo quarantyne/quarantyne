@@ -4,6 +4,7 @@ import com.google.common.base.Charsets;
 import com.google.common.hash.Hashing;
 import com.quarantyne.util.CaseInsensitiveStringKV;
 import java.util.Objects;
+import javax.annotation.Nullable;
 import lombok.Value;
 
 
@@ -27,7 +28,9 @@ public class HttpRequest {
         .putInt(remoteIpAddresses.hashCode())
         .hash().toString();
   }
-
+  public String getIdentifier() {
+    return headers.getOrDefault("user-agent", "n/a")+"@"+remoteIpAddresses.getAll();
+  }
   @Override
   public boolean equals(Object o) {
     if (this == o) {

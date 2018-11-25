@@ -1,6 +1,7 @@
 package com.quarantyne.proxy.verticles;
 
 import com.google.common.base.Joiner;
+import com.quarantyne.bouncer.Bouncer;
 import com.quarantyne.classifiers.Label;
 import com.quarantyne.classifiers.MainClassifier;
 import com.quarantyne.config.Config;
@@ -38,6 +39,7 @@ public final class ProxyVerticle extends AbstractVerticle {
   private final MainClassifier quarantyneClassifier;
   private HttpClient httpClient;
   private Supplier<Config> configSupplier;
+  private Bouncer bouncer;
 
   public ProxyVerticle(ConfigArgs configArgs,
       MainClassifier quarantyneClassifier,
@@ -49,6 +51,7 @@ public final class ProxyVerticle extends AbstractVerticle {
 
   @Override
   public void start(Future<Void> startFuture) {
+    this.bouncer = new Bouncer(vertx, configSupplier, configArgs);
     // proxy server (this server)
     HttpServerOptions httpServerOptions = new HttpServerOptions();
     httpServerOptions.setHost(configArgs.getIngress().getIp());
@@ -88,16 +91,10 @@ public final class ProxyVerticle extends AbstractVerticle {
 
   private void proxiedRequestHandler(HttpServerRequest frontReq, @Nullable Buffer frontReqBody) {
     HttpServerResponse frontRep = frontReq.response();
-    HttpClientRequest backReq = httpClient.request(
-        frontReq.method(),
-        frontReq.uri()
-    );
 
     CaseInsensitiveStringKV frontReqHeaders =
         new CaseInsensitiveStringKV(frontReq.headers().entries());
 
-    backReq.headers().setAll(frontReq.headers());
-    backReq.headers().set(HttpHeaders.HOST, configArgs.getEgress().getHost());
     // inject quarantyne headers, if any
     HttpRequest qReq = new HttpRequest(
         HttpRequestMethod.valueOf(frontReq.method().toString().toUpperCase()),
@@ -108,29 +105,44 @@ public final class ProxyVerticle extends AbstractVerticle {
     @Nullable final HttpRequestBody qBody =
         getBody(qReq.getMethod(), frontReqBody, frontReq.getHeader(HttpHeaders.CONTENT_TYPE));
 
-    backReq.headers().addAll(quarantyneCheck(qReq, qBody));
-    // --------------------------------
-    backReq.handler(backRep -> {
-      Buffer body = Buffer.buffer();
-      backRep.handler(body::appendBuffer);
-      backRep.endHandler(h -> {
-        // callback quarantyne with data to record, if needed
-        quarantyneClassifier.record(new HttpResponse(backRep.statusCode()), qReq, qBody);
-        // --------------------------------
-        frontRep.setStatusCode(backRep.statusCode());
-        frontRep.headers().setAll(backRep.headers());
-        frontRep.end(body);
-      });
-    });
-    backReq.exceptionHandler(ex -> {
-      log.error("error while querying downstream service", ex);
-      frontRep.setStatusCode(500);
-      frontRep.end("Internal Server Error. This request cannot be satisfied.");
-    });
-    if (frontReqBody != null) {
-      backReq.end(frontReqBody);
+    Set<Label> quarantyneLabels = quarantyneClassifier.classify(qReq, qBody);
+
+    if (configSupplier.get().isBlocked(quarantyneLabels)) {
+      log.info("blocking request {} with labels {}", qReq.getIdentifier(), quarantyneLabels);
+
+      bouncer.bounce(frontRep);
+
     } else {
-      backReq.end();
+      HttpClientRequest backReq = httpClient.request(
+          frontReq.method(),
+          frontReq.uri()
+      );
+      backReq.headers().setAll(frontReq.headers());
+      backReq.headers().set(HttpHeaders.HOST, configArgs.getEgress().getHost());
+      backReq.headers().addAll(quarantyneCheck(quarantyneLabels));
+      // --------------------------------
+      backReq.handler(backRep -> {
+        Buffer body = Buffer.buffer();
+        backRep.handler(body::appendBuffer);
+        backRep.endHandler(h -> {
+          // callback quarantyne with data to record, if needed
+          quarantyneClassifier.record(new HttpResponse(backRep.statusCode()), qReq, qBody);
+          // --------------------------------
+          frontRep.setStatusCode(backRep.statusCode());
+          frontRep.headers().setAll(backRep.headers());
+          frontRep.end(body);
+        });
+      });
+      backReq.exceptionHandler(ex -> {
+        log.error("error while querying downstream service", ex);
+        frontRep.setStatusCode(500);
+        frontRep.end("Internal Server Error. This request cannot be satisfied.");
+      });
+      if (frontReqBody != null) {
+        backReq.end(frontReqBody);
+      } else {
+        backReq.end();
+      }
     }
   }
 
@@ -138,9 +150,7 @@ public final class ProxyVerticle extends AbstractVerticle {
 
   // returns quarantyne headers
 
-  private MultiMap quarantyneCheck(HttpRequest req, HttpRequestBody body) {
-    Set<Label> quarantyneLabels = quarantyneClassifier.classify(req, body);
-
+  private MultiMap quarantyneCheck(Set<Label> quarantyneLabels) {
     MultiMap quarantyneHeaders = MultiMap.caseInsensitiveMultiMap();
     if (!quarantyneLabels.isEmpty()) {
       quarantyneHeaders.add(QuarantyneHeaders.LABELS, joiner.join(quarantyneLabels));

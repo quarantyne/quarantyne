@@ -12,6 +12,6 @@
   "email_param_keys": ["email", "contact[email]"],
   "country_iso_code_param_keys": ["country_code"],
   "blocked_request_page": "/500.html",
-  "blocked_classes": ["pce"],
+  "blocked_classes": ["sua"],
   "is_disabled": false
 }

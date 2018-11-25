@@ -24,7 +24,7 @@ public class FastAgentClassifier implements HttpRequestClassifier {
 
     this.penaltyBoxCache = Caffeine
         .newBuilder()
-        .expireAfterWrite(Duration.ofMinutes(20))
+        .expireAfterWrite(Duration.ofSeconds(5))
         .build();
   }
 

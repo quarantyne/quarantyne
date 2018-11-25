@@ -29,7 +29,7 @@ public class Config {
     this.registerAction = new QIdentityAction("/register", "email", "password");
     this.emailParamKeys = emptySet;
     this.countryIsoCodeParamKeys = emptySet;
-    this.blockedRequestPage = "/";
+    this.blockedRequestPage = "https://raw.githubusercontent.com/AndiDittrich/HttpErrorPages/master/dist/HTTP500.html";
     this.blockedClasses = Sets.newHashSet();
     this.isDisabled = false;
   }
@@ -51,6 +51,7 @@ public class Config {
   }
 
   public boolean isBlocked(Set<Label> labels) {
-    return ! Sets.intersection(Label.ALL, labels).isEmpty();
+    System.out.println(labels);
+    return ! Sets.intersection(labels, Label.ALL).isEmpty();
   }
 }

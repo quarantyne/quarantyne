@@ -23,7 +23,8 @@ public class ConfigRetrieverOptionsSupplier implements Supplier<ConfigRetrieverO
       throw new IllegalArgumentException("Config location require but null/empty found");
     }
     this.configRetrieverOptions = new ConfigRetrieverOptions();
-    configRetrieverOptions.setScanPeriod(Duration.ofMinutes(5).toMillis());
+    //TODO
+    //configRetrieverOptions.setScanPeriod(Duration.ofMinutes(5).toMillis());
     configRetrieverOptions.addStore(
         fromUrl(configLocation).orElseGet(() -> fromFile(configLocation)));
   }
