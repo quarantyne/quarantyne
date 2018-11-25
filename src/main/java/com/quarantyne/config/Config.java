@@ -29,7 +29,7 @@ public class Config {
         EMPTY_SET,
         EMPTY_SET,
         "https://raw.githubusercontent.com/AndiDittrich/HttpErrorPages/master/dist/HTTP500.html",
-        Sets.newHashSet(Label.FAST_BROWSER),
+        Sets.newHashSet(),
         false);
   }
 

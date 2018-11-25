@@ -27,8 +27,7 @@ public class Label {
   public static Label IP_ROTATION = new Label("IPR");
   public static Label SUSPICIOUS_HEADERS = new Label("SHR");
   public static Label SUSPICIOUS_UA = new Label("SUA");
-  public static Label PUBLIC_CLOUD_EXECUTION_AWS = new Label("PCX/AWS");
-  public static Label PUBLIC_CLOUD_EXECUTION_GCP = new Label("PCX/GCP");
+  public static Label PUBLIC_CLOUD_EXECUTION = new Label("PCX");
   public static Label IP_COUNTRY_DISCREPANCY = new Label("IPD");
   public static Label SUSPICIOUS_GEO = new Label("SGE");
   public static Label ALL = new Label("ALL");
@@ -40,8 +39,7 @@ public class Label {
       IP_ROTATION,
       SUSPICIOUS_HEADERS,
       SUSPICIOUS_UA,
-      PUBLIC_CLOUD_EXECUTION_AWS,
-      PUBLIC_CLOUD_EXECUTION_GCP,
+      PUBLIC_CLOUD_EXECUTION,
       IP_COUNTRY_DISCREPANCY,
       SUSPICIOUS_GEO,
       ALL

@@ -25,11 +25,11 @@ public class PublicCloudExecutionClassifier implements HttpRequestClassifier {
   public Label classify(HttpRequest httpRequest, @Nullable HttpRequestBody body) {
     Optional<String> isAws = awsMembership.get(httpRequest.getRemoteIpAddresses().getOrigin());
     if (isAws.isPresent()) {
-      return Label.PUBLIC_CLOUD_EXECUTION_AWS;
+      return Label.PUBLIC_CLOUD_EXECUTION;
     }
     Optional<String> isGcp = gcpMembership.get(httpRequest.getRemoteIpAddresses().getOrigin());
     if (isGcp.isPresent()) {
-      return Label.PUBLIC_CLOUD_EXECUTION_GCP;
+      return Label.PUBLIC_CLOUD_EXECUTION;
     }
     return Label.NONE;
   }
