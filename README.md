@@ -10,6 +10,7 @@ __TL;DR__ Quarantyne is a reverse-proxy that protects web applications and APIs 
 - [Configuration](#configuration)
 - [Quick Run](#quick-run)
 - [Distributions](#distributions)
+- [Mailing list / Support](#mailinglist)
 - [License](#license)
 
 ## Requirements
@@ -177,6 +178,9 @@ https://github.com/quarantyne/heroku-buildpack-quarantyne
 
 ### Docker image
 Coming soon
+
+## Mailing List
+https://groups.google.com/forum/#!forum/quarantyne-users
 
 ## License 
 [Apache 2](https://github.com/quarantyne/quarantyne/blob/master/LICENSE)
