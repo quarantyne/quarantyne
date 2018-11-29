@@ -16,7 +16,7 @@ __TL;DR__ Quarantyne is a reverse-proxy that protects web applications and APIs 
 - Java 8
 
 ## Presentation
-Quarantyne is a reverse-proxy written in java. It fronts a web application or API and protects it from malicious requests and misuse. It cannot stop them all, but it will definitely make it harder and more expensive to perform.
+Quarantyne is a reverse-proxy written in java. It fronts a web application or API and protects it from fraudulent behavior, misuse, bots and cyber-attacks. It cannot stop them all, but it will definitely make it harder and more expensive to perform.
 
 It's like a firewall but smarter, because it does not just block traffic because the user-agent is not in a whitelist. Quarantyne also performs deep request inspection to detect if, for example, the password used has been compromised before, or if the email is disposable, with minimal configuration and no changes in your application.  Our [coverage](#coverage) section precisely lists what Quarantyne can identify.
 
