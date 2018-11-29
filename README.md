@@ -86,8 +86,23 @@ Two complementary configuration systems are used: command-line arguments and an 
 Run the following command to display the help and what arguments are available
 
     $ java -jar quarantyne -h
-
-The `--traffic-config-file` is an optional JSON configuration file that tells Quarantyne how requests to your service are structured. It enables deep traffic analysis and increase coverage.
+    Usage: <main class> [options]
+      Options:
+        --admin
+          internal ip:port where to access admin, UI and metrics. Optional
+        --config-file
+          Optional URL or local path to a Quarantyne JSON configuration file
+        --egress
+          HTTP destination where Quarantyne forwards annotated web traffic.
+          Default: http://httpbin.org
+        --help, -help, --h, -h
+          Display help about available configuration arguments
+          Default: false
+        --ingress
+          ip:port of inbound web traffic.
+          Default: 0.0.0.0:8080
+          
+The `--config-file` is an optional JSON configuration file that tells Quarantyne how requests to your service are structured. It enables deep traffic analysis and increase coverage.
 
 ### Traffic config JSON file
 The traffic config file is optional and can either be an absolute local path or a [remote HTTP(S) URL](https://s3-us-west-2.amazonaws.com/releases.quarantyne.com/quarantyne.json) to a JSON file containing a single JSON object with the following structure. Describing the structure of your HTTP requests helps Quarantyne perform deep inspection of critical data such as password, emails or countries.
@@ -143,10 +158,11 @@ Clone this repo or and run the following
 
 You should  see the following:
 ```bash
-"2018-10-20T18:41:17.830-0700" [main] INFO com.quarantyne.proxy.Main - ==> quarantyne
-"2018-10-20T18:41:17.833-0700" [main] INFO com.quarantyne.proxy.Main - ==> proxy   @ 127.0.0.1:8080
-"2018-10-20T18:41:17.833-0700" [main] INFO com.quarantyne.proxy.Main - ==> remote  @ httpbin.org:80
-"2018-10-20T18:41:17.834-0700" [main] INFO com.quarantyne.proxy.Main - ==> admin   @ http://127.0.0.1:3231
+"2018-11-28T22:25:17.152-0800" [main] INFO com.quarantyne.proxy.Main - 0.0.0.0:8080 <= quarantyne => http://httpbin.org:80
+"2018-11-28T22:25:17.223-0800" [main] INFO com.quarantyne.proxy.Main - see available options with --help
+"2018-11-28T22:25:17.234-0800" [main] DEBUG com.quarantyne.proxy.Main - ==> event loop size is 8
+"2018-11-28T22:25:17.234-0800" [main] DEBUG com.quarantyne.proxy.Main - ==> detected 4 cpus core
+"2018-11-28T22:25:17.496-0800" [main] INFO com.quarantyne.config.ConfigRetrieverOptionsSupplier - remote configuration file found at https://s3-us-west-2.amazonaws.com/releases.quarantyne.com/quarantyne.test.json
 ```
 
 You are all set! By default, Quarantyne starts on 
