@@ -5,9 +5,9 @@ __TL;DR__ Quarantyne is a reverse-proxy that protects web applications and APIs 
 - [Requirements](#requirements)
 - [Presentation](#presentation)
 - [Features](#features)
-- [Configuration](#configuration)
-- [Passive vs Active](#passivevsactive)
 - [Coverage](#coverage)
+- [Passive vs Active](#passivevsactive)
+- [Configuration](#configuration)
 - [Quick Run](#quick-run)
 - [Distributions](#distributions)
 - [License](#license)
@@ -49,6 +49,34 @@ about your traffic, your business, or your users.
 Single jar with 0 dependencies. Metrics are available on 
 `[proxyHost]:[adminPort]/metrics`. Service health is available 
 on `[proxyHost]:[adminPort]/health`
+
+
+## Coverage
+Quarantyne is able to detect the following threats and misuse.
+
+| Label | Definition | Behavior | Implemented |
+ ----- | :-------: | :-----: | :---
+__LBD__ | Large Body Data  | Overload target's form processor with POST/PUT request with body > 1MB | yes
+__FAS__ | Fast Browsing | Request rate faster than regular human browsing | yes
+__CPW__ | Compromised Password | Password used is known from previous data breach. Possible account takeover | yes
+__DMX__ | Disposable Email | Email used is a disposable emails service | yes
+__IPR__ | IP Address Rotation | Same visitor is rotating its IP addresses | no
+__SHD__ | Suspicious Request Headers| Abnormal HTTP Request headers  | yes
+__SUA__ | Suspicious User-Agent | User Agent not from a regular web browser | yes
+__PCX__ | Public Cloud Execution | IP address belongs to a public cloud service like AWS or GCP | no
+__IPD__ | IP/Country discrepancy | Country inferred from visitor IP is different from country field in submitted request | no
+__SGE__ | Suscpicious Geolocation | This request is not usually received from this geolocation. Possible account takeover. | no
+
+
+## Passive vs. Active
+### Passive mode
+Quarantyne lets you decide how you want to handle requests it flags. Quarantyne's default configuration is to __NOT__ block tainted traffic. This traffic will make its way to your server and will be labelled as such via HTTP headers. 
+
+Passive mode is the recommended way to get familiar with Quarantyne and to get a sense of what's going on inside your web traffic. In your application, log or plot the incoming Quarantyne labels and you might be surprised (or not) by what you find!
+
+### Active Mode
+In active mode, Quarantyne prevents tainted traffic from reaching your application. Blocking happens only you configure explicitely Quarantyne to do so. The [configuration](#configuration) section explains how traffic blocking can be enabled.
+
 
 
 ## Configuration
@@ -97,33 +125,6 @@ Root properties are optional.
  `country_iso_code_param_keys` | Form/JSON key where country iso codes are sent
  `blocked_request_page` | HTTP response to return when blocking a request| It's better when this looks like a legit page/error as to not tip off the attack. Even better if you can inject fake data :)
  `blocked_classes` | An array of attack classes to block. | `[]` is equivalent to passive mode. `['all']` stops every class of attack Quarantyne can detect. See [coverage](#coverage)
-
-
-## Passive vs. Active
-### Passive mode
-Quarantyne lets you decide how you want to handle requests it flags. Quarantyne's default configuration is to __NOT__ block tainted traffic. This traffic will make its way to your server and will be labelled as such via HTTP headers. 
-
-Passive mode is the recommended way to get familiar with Quarantyne and to get a sense of what's going on inside your web traffic. In your application, log or plot the incoming Quarantyne labels and you might be surprised (or not) by what you find!
-
-### Active Mode
-In active mode, Quarantyne prevents tainted traffic from reaching your application. Blocking happens only you configure explicitely Quarantyne to do so. The [configuration](#configuration) section explains how traffic blocking can be enabled.
-
-
-## Coverage
-Quarantyne is able to detect the following threats and misuse.
-
-| Label | Definition | Behavior | Implemented |
- ----- | :-------: | :-----: | :---
-__LBD__ | Large Body Data  | Overload target's form processor with POST/PUT request with body > 1MB | yes
-__FAS__ | Fast Browsing | Request rate faster than regular human browsing | yes
-__CPW__ | Compromised Password | Password used is known from previous data breach. Possible account takeover | yes
-__DMX__ | Disposable Email | Email used is a disposable emails service | yes
-__IPR__ | IP Address Rotation | Same visitor is rotating its IP addresses | no
-__SHD__ | Suspicious Request Headers| Abnormal HTTP Request headers  | yes
-__SUA__ | Suspicious User-Agent | User Agent not from a regular web browser | yes
-__PCX__ | Public Cloud Execution | IP address belongs to a public cloud service like AWS or GCP | no
-__IPD__ | IP/Country discrepancy | Country inferred from visitor IP is different from country field in submitted request | no
-__SGE__ | Suscpicious Geolocation | This request is not usually received from this geolocation. Possible account takeover. | no
 
 
 ## Quick run
