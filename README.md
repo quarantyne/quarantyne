@@ -10,7 +10,7 @@ __TL;DR__ Quarantyne is a reverse-proxy that protects web applications and APIs 
 - [Configuration](#configuration)
 - [Quick Run](#quick-run)
 - [Distributions](#distributions)
-- [Mailing list / Support](#mailinglist)
+- [Mailing list](#mailing-list)
 - [License](#license)
 
 ## Requirements
