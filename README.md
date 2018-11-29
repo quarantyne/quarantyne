@@ -5,10 +5,10 @@ __TL;DR__ Quarantyne is a reverse-proxy that protects web applications and APIs 
 - [Requirements](#requirements)
 - [Presentation](#presentation)
 - [Features](#features)
-- [Quick Run](#quick-run)
 - [Configuration](#configuration)
 - [Passive vs Active](#passivevsactive)
 - [Coverage](#coverage)
+- [Quick Run](#quick-run)
 - [Distributions](#distributions)
 - [License](#license)
 
@@ -49,31 +49,6 @@ about your traffic, your business, or your users.
 Single jar with 0 dependencies. Metrics are available on 
 `[proxyHost]:[adminPort]/metrics`. Service health is available 
 on `[proxyHost]:[adminPort]/health`
-
-
-## Quick run
-### Run the jar
-Quarantyne ships as a single 0-dependencies executable jar. Download a release and run:
-
-    $ java -jar quarantyne.jar
-
-### Build from source
-Clone this repo or and run the following
-
-    $ ./gradlew run
-
-You should  see the following:
-```bash
-"2018-10-20T18:41:17.830-0700" [main] INFO com.quarantyne.proxy.Main - ==> quarantyne
-"2018-10-20T18:41:17.833-0700" [main] INFO com.quarantyne.proxy.Main - ==> proxy   @ 127.0.0.1:8080
-"2018-10-20T18:41:17.833-0700" [main] INFO com.quarantyne.proxy.Main - ==> remote  @ httpbin.org:80
-"2018-10-20T18:41:17.834-0700" [main] INFO com.quarantyne.proxy.Main - ==> admin   @ http://127.0.0.1:3231
-```
-
-You are all set! By default, Quarantyne starts on 
-127.0.0.1:8080, and proxies traffic to http://httpbin.org.
-
-Send a few requests to http://127.0.0.1:8080/headers via various means. If fraudulent behavior is detected, you should see `X-Quarantyne-Label` HTTP headers in the request receive by your application. Hint: try with curl.
 
 
 ## Configuration
@@ -133,6 +108,7 @@ Passive mode is the recommended way to get familiar with Quarantyne and to get a
 ### Active Mode
 In active mode, Quarantyne prevents tainted traffic from reaching your application. Blocking happens only you configure explicitely Quarantyne to do so. The [configuration](#configuration) section explains how traffic blocking can be enabled.
 
+
 ## Coverage
 Quarantyne is able to detect the following threats and misuse.
 
@@ -148,6 +124,34 @@ __SUA__ | Suspicious User-Agent | User Agent not from a regular web browser | ye
 __PCX__ | Public Cloud Execution | IP address belongs to a public cloud service like AWS or GCP | no
 __IPD__ | IP/Country discrepancy | Country inferred from visitor IP is different from country field in submitted request | no
 __SGE__ | Suscpicious Geolocation | This request is not usually received from this geolocation. Possible account takeover. | no
+
+
+## Quick run
+### Hosted demo
+Available at https://demo.quarantyne.com/. In this scenario, Quarantyne is fronting httpbin.org in passive mode. Threats and misuse sent will be flagged via HTTP headers so querying  https://demo.quarantyne.com/headers or https://demo.quarantyne.com/anything is a good start to see what's going on. Hint: start simple, start with curl.
+
+### Run the jar
+Quarantyne ships as a single 0-dependencies executable jar. Download a release and run:
+
+    $ java -jar quarantyne.jar
+
+### Build from source
+Clone this repo or and run the following
+
+    $ ./gradlew run
+
+You should  see the following:
+```bash
+"2018-10-20T18:41:17.830-0700" [main] INFO com.quarantyne.proxy.Main - ==> quarantyne
+"2018-10-20T18:41:17.833-0700" [main] INFO com.quarantyne.proxy.Main - ==> proxy   @ 127.0.0.1:8080
+"2018-10-20T18:41:17.833-0700" [main] INFO com.quarantyne.proxy.Main - ==> remote  @ httpbin.org:80
+"2018-10-20T18:41:17.834-0700" [main] INFO com.quarantyne.proxy.Main - ==> admin   @ http://127.0.0.1:3231
+```
+
+You are all set! By default, Quarantyne starts on 
+127.0.0.1:8080, and proxies traffic to http://httpbin.org.
+
+Send a few requests to http://127.0.0.1:8080/headers via various means. If fraudulent behavior is detected, you should see `X-Quarantyne-Label` HTTP headers in the request receive by your application. Hint: try with curl.
 
 
 ## Distributions
