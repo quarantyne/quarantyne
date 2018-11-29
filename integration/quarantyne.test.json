@@ -11,8 +11,7 @@
   },
   "email_param_keys": ["email", "contact[email]"],
   "country_iso_code_param_keys": ["country_code"],
-  "blocked_request_page": "/500.html",
-  "blocked_classes": ["sua"],
-  
+  "blocked_request_page": "https://raw.githubusercontent.com/AndiDittrich/HttpErrorPages/master/dist/HTTP500.html",
+  "blocked_classes": [],
   "is_disabled": false
 }

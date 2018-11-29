@@ -12,7 +12,7 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-public class ClassifiersTest {
+public class ClassifiersTest extends AbstractTest {
 
   OkHttpClient httpClient = new OkHttpClient();
 
@@ -21,7 +21,7 @@ public class ClassifiersTest {
 
   @Before
   public void before() throws InterruptedException{
-    Thread.sleep(900);
+    Thread.sleep(1300);
   }
 
   @Test
@@ -140,6 +140,6 @@ public class ClassifiersTest {
         .get("/anything")
         .then()
         .statusCode(equalTo(200))
-        .body("headers.X-Quarantyne-Labels", equalTo("PCX/AWS"));
+        .body("headers.X-Quarantyne-Labels", equalTo("PCX"));
   }
 }

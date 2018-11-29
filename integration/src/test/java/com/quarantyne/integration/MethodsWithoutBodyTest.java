@@ -9,9 +9,10 @@ import static io.restassured.RestAssured.post;
 import static io.restassured.RestAssured.put;
 import static org.hamcrest.Matchers.equalTo;
 
+import org.junit.Before;
 import org.junit.Test;
 
-public class MethodsWithoutBodyTest {
+public class MethodsWithoutBodyTest extends AbstractTest {
 
   @Test
   public void testGet() {

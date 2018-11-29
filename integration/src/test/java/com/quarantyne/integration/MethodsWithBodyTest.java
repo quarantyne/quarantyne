@@ -4,9 +4,11 @@ import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
 
 import io.vertx.core.json.JsonObject;
+import org.junit.Before;
 import org.junit.Test;
 
-public class MethodsWithBodyTest {
+public class MethodsWithBodyTest extends AbstractTest {
+
   @Test
   public void testPost_plainText() {
     given().body("hello world")
