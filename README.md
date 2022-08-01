@@ -1,3 +1,5 @@
+=== THIS PROJECT IS ARCHIVED ===
+
 # Quarantyne &middot; Modern Web Firewall 🛃 [![Build Status](https://travis-ci.org/quarantyne/quarantyne.svg?branch=master)](https://travis-ci.org/quarantyne/quarantyne) 
 _Automated web security made simple_ 
 
